@@ -31,7 +31,7 @@ const featureList: FeatureItem[] = [
 
 const contributors = [
   {name: 'Okto Ramadhan', role: 'Asprak D', github: 'oktoramadhan'},
-  {name: 'Andrie Praditya Nugroho', role: 'Asprak C', github: 'andriepraditya47'},
+  {name: 'Andrie Praditya Nugroho', role: 'Asprak C', github: 'AndriePN47'},
   {name: 'Audrey Jasmine Amadea', role: 'Asprak C', github: 'Audreyja22'},
   {name: 'Imam Alfandiyansa', role: 'Asprak D', github: 'imamalfandiyansa'},
 ];
