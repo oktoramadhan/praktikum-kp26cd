@@ -1,0 +1,11 @@
+{
+    "label": "Pengantar",
+    "position": 1,
+    "link": {
+        "type": "generated-index",
+        "title": "Pengantar",
+        "description": "Pengenalan Praktikum Konsep Pemrograman",
+        "slug": "/pengantar"
+    }
+
+}
