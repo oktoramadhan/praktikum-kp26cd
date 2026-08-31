@@ -43,8 +43,7 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+
         },
         blog: {
           showReadingTime: true,
@@ -86,13 +85,10 @@ const config: Config = {
           sidebarId: 'tutorialSidebar',
           position: 'left',
           label: 'Materi dan Penugasan',
+          className: 'materi-penugasan-link',
         },
 
-        {
-          href: 'https://github.com/facebook/docusaurus',
-          label: 'GitHub',
-          position: 'right',
-        },
+
       ],
     },
     footer: {
@@ -103,7 +99,8 @@ const config: Config = {
           items: [
             {
               label: 'Materi dan Penugasan',
-              to: '/docs/pengantar/',
+              to: '/docs/pengantar',
+              className: 'materi-penugasan-link',
             },
           ],
         },
@@ -120,13 +117,13 @@ const config: Config = {
           title: 'More',
           items: [
             {
-              label: 'Whatsapp Group',
-              href: 'https://chat.whatsapp.com/invite/link',
+              label: 'Need Help?',
+              href: 'https://api.whatsapp.com/send/?phone=6283172015644&text&type=phone_number&app_absent=0',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Praktikum Konsep Pemrograman, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Praktikum Konsep Pemrograman, Maintained by Asisten KP26 C & D.`,
     },
     prism: {
       theme: prismThemes.github,

@@ -1,0 +1,9 @@
+{
+    "label": "Materi",
+    "position": 2,
+    "link": {
+        "type": "generated-index",
+        "description": "Materi Pertemuan Praktikum Konsep Pemrograman",
+        "slug": "/materi"
+    }
+}

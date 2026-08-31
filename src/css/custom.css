@@ -50,3 +50,7 @@
   --homepage-hero-start: #526f7d;
   --homepage-hero-end: #293c45;
 }
+
+.materi-penugasan-link {
+  font-weight: 700;
+}
