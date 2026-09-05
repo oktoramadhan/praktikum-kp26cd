@@ -1,6 +1,202 @@
 ---
-title: C something something
+title: Data Types and Variables
 sidebar_position: 1
 toc_min_heading_level: 2
 toc_max_heading_level: 6
 ---
+## Pengantar Singkat
+
+Ringkasan singkat mengenai syntax, statement, dan contoh program sederhana.
+
+### Syntax
+
+Syntax merupakan aturan-aturan dalam penulisan kode, termasuk cara menggunakan simbol, keywords, dan sebagainya. Syntax memastikan kode sudah tepat dalam penulisannya agar komputer dapat memahami dan mengeksekusi program. Tiap-tiap bahasa pemrograman memiliki syntax tersendiri.
+
+### Statement
+
+Statement merupakan instruksi yang diberikan ke komputer untuk dieksekusi.
+
+Contoh:
+
+```c
+printf("Hello World!");
+```
+
+### Contoh program sederhana
+
+```c
+#include <stdio.h>
+
+int main(){
+
+printf("Hello World");
+
+return 0;
+}
+```
+
+Penjelasan singkat:
+	
+	`#include`: Memasukkan isi dari library yang diinginkan (contohnya yaitu stdio.h, library bawaan dari C)
+	
+	`int main()`: Fungsi yang akan dijalankan pertama kali oleh program
+	
+	`printf()`:  Fungsi untuk mencetak teks ke terminal
+	
+	`return 0`: Mengembalikan nilai 0 ketika fungsi telah selesai dijalankan. Harus ada nilai kembalian untuk fungsi bukan void.
+## Variabel
+
+Variabel merupakan nama lokasi penyimpanan pada memori yang menyimpan sebuah nilai. Nilai ini dapat digantikan pada saat eksekusi program.
+
+Syntax untuk deklarasi variabel:
+
+```c
+dataType variableName = value;
+```
+
+Keterangan:
+
+	`dataType`: tipe data dari variable (int, float, double, dll)
+
+	`variableName`: Nama dari variabel dengan format tertentu
+
+	`=`: Operator untuk assign nilai `value` ke variabel
+
+	`value`: Nilai dari variabel
+
+### Pendefinisian Variabel
+
+Variabel harus didefnisikan terlebih dahulu sebelum digunakan pada program. Terdapat 3 cara pendefinisian variabel:
+
+#### Single Variable Declaration
+
+Metode pendefinisian untuk 1 variabel.
+
+```c
+int x = 1;
+```
+#### Multiple Variables Declaration
+
+Metode pendefnisian untuk variabel lebih dari 1.
+
+```c
+int x = 1, y = 2, z = 3;
+```
+#### Multiple Variables Assignment
+
+Metode assignment nilai yang sama ke beberapa variabel.
+
+```c
+x = y = z = 1;
+```
+
+Untuk metode ini, variabel harus dideklarasikan terlebih dahulu.
+
+## Data Types
+
+Data Types menentukan tipe dari data yang disimpan oleh variabel pada program. Data types membantu compiler untuk memahami cara menangani data tersebut pada memori.
+
+Berikut tabel mengenai beberapa tipe data di C:
+
+| Tipe Data      | Deskripsi                      | Pendefinisian                               |
+| -------------- | ------------------------------ | ------------------------------------------- |
+| integer        | Menyimpan angka bulat          | int, short, long, long long, char           |
+| floating point | Menyimpan angka desimal        | float, double                               |
+| Structure      | Tipe data buatan dari pengguna | struct                                      |
+| Unsigned       | Menyimpan nilai non-negative   | unsigned int, unsigned float, unsigned char |
+
+
+Value Range untuk beberapa tipe data di C:
+
+![Data Types and Ranges and Sizes](./C-Datatypes-Range-and-Sizes.png)
+
+Sumber: https://techbeamers.com/wp-content/uploads/2019/01/C-Datatypes-Range-and-Sizes.png
+
+
+## C Identifiers
+
+### Identifiers
+
+Identifier merupakan nama unik untuk mengidentifikasi variabel, fungsi, ataupun item yang didefinisikan oleh pengguna. Pada variabel, identifier digunakan untuk mereferensi variabel dan nilainya (ingat bahwa variabel merupakan ruang pada memori yang menyimpan nilai).
+
+### Aturan Penulisan Identifiers
+
+- Boleh berisikan huruf, angka, dan underscore ( _ )
+- Identifier bersifat case-sensitive
+- Karakter pertama harus dimulai dengan huruf atau underscore
+- Identifier tidak boleh menggunakan reserved words yang ada (contoh reserved words di C: int, if, void)
+
+## Format Specifiers
+
+Format specifiers digunakan untuk mengindikasi tipe data dari variabel. Format specifier berfungsi sebagai placeholder untuk nilai variabel pada output.
+
+Contoh penggunaan:
+
+```c
+int x = 1;
+printf("x is %d", x); // output: x is 1
+```
+
+Contoh-contoh format specifiers:
+
+- `%d atau %i`: signed integer
+- `%ld atau %li`: long
+- `%lld atau %lli`: long long
+- `%hd`: short
+- `%f`: float
+- `%lf`: double
+- `%c`: char
+- `%u`: unsigned integer
+
+
+## Basic I/O
+
+### Output
+
+Salah satu contoh output sederhana adalah mencetak sesuatu ke terminal, seperti pada awal modul.
+
+```c
+printf("Hello World!");
+```
+
+Program akan mencetak teks `Hello World!` ke terminal.
+
+```c
+int x = 1;
+printf("%d", x);
+```
+
+Program akan mencetak angka 1 ke terminal.
+
+```c
+int x = 1;
+float y = 2.5;
+printf("%d and %f", x, y);
+```
+
+Program akan mencetak teks `1 and 2.5` ke terminal.
+
+### Input
+
+Pengguna dapat memberikan nilai ke program dengan menggunakan fungsi seperti `scanf()`.
+
+Contoh kode:
+
+```c
+#include <stdio.h>
+
+int main(){
+
+	int x;
+	float y;
+	
+	printf("x is: ");
+	scanf("%d", &x);
+	
+	printf("y is: ");
+	scanf("%f", &y);
+	
+	printf("x = %d and y = %f", x, y);
+	return 0;
+}
+```
