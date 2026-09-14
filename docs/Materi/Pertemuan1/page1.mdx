@@ -4,199 +4,257 @@ sidebar_position: 1
 toc_min_heading_level: 2
 toc_max_heading_level: 6
 ---
-## Pengantar Singkat
+# Variable and Data Types
 
-Ringkasan singkat mengenai syntax, statement, dan contoh program sederhana.
-
-### Syntax
-
-Syntax merupakan aturan-aturan dalam penulisan kode, termasuk cara menggunakan simbol, keywords, dan sebagainya. Syntax memastikan kode sudah tepat dalam penulisannya agar komputer dapat memahami dan mengeksekusi program. Tiap-tiap bahasa pemrograman memiliki syntax tersendiri.
-
-### Statement
-
-Statement merupakan instruksi yang diberikan ke komputer untuk dieksekusi.
-
-Contoh:
-
-```c
-printf("Hello World!");
-```
-
-### Contoh program sederhana
-
+## Program Sederhana
 ```c
 #include <stdio.h>
 
-int main(){
+int main() {
+    // Mencetak teks ke terminal
+    printf("Hello, World\n");
+    return 0;
+}
+```
+### Memahami kode
+Mari pahami kode tersebut baris per baris, dimulai dari baris yang pertama:
 
-printf("Hello World");
+```c
+#include <stdio.h>
+```
 
-return 0;
+Simbol `#` di dalam C menandakan bahwa baris tersebut adalah **preprocessor directive**, sebuah instruksi di dalam *source code* yang diproses oleh *preprocessor* sebelum proses kompilasi dimulai. Preprocessor directive biasanya memberikan instruksi ke compiler bagaimana harus menangani kode yang akan dikompilasi. Seperti pada baris di atas, kita memberikan perintah untuk menyertakan sebuah *library* bawaan C bernama `stdio.h` (*Standard Input/Output*) ke dalam *source code*. 
+
+Tidak seperti baris kode C pada umumnya, preprocessor directive tidak memerlukan tanda titik koma (`;`) pada akhir barisnya.
+
+```c
+int main() {
+    // ...
 }
 ```
 
-Penjelasan singkat:
-	
-	`#include`: Memasukkan isi dari library yang diinginkan (contohnya yaitu stdio.h, library bawaan dari C)
-	
-	`int main()`: Fungsi yang akan dijalankan pertama kali oleh program
-	
-	`printf()`:  Fungsi untuk mencetak teks ke terminal
-	
-	`return 0`: Mengembalikan nilai 0 ketika fungsi telah selesai dijalankan. Harus ada nilai kembalian untuk fungsi bukan void.
-## Variabel
+Selanjutnya, fungsi `main()` di atas adalah fungsi utama dalam sebuah kode C yang menjadi titik awal (*entry point*) yang akan dijalankan pertama kali oleh program.
 
-Variabel merupakan nama lokasi penyimpanan pada memori yang menyimpan sebuah nilai. Nilai ini dapat digantikan pada saat eksekusi program.
+```c
+printf("Hello, World\n");
+```
 
-Syntax untuk deklarasi variabel:
+Fungsi `printf()` di atas adalah fungsi bawaan C yang terdapat pada library `stdio.h`. Fungsi ini digunakan untuk mencetak teks ke terminal berdasarkan argumen yang diberikan. Sebagai contoh, kita memberikan argumen berupa string `"Hello, World\n"`.
 
+Perhatikan karakter `\n` di ujung teks tersebut:
+- `\n` adalah sebuah **escape sequence** yang berarti **baris baru (*newline*)**.
+- Fungsinya persis seperti menekan tombol **Enter** pada keyboard, sehingga teks yang dicetak berikutnya atau baris *prompt* di terminal akan berpindah ke baris baru di bawahnya dan tidak menempel.
+
+```c
+return 0;
+```
+Baris ini menyatakan nilai kembalian (*return value*) yang dikirimkan oleh fungsi `main` kepada sistem operasi ketika program telah selesai berjalan.
+
+**Mengapa nilainya harus angka `0`?**  
+Di dalam standar konvensi sistem operasi, angka `0` menandakan bahwa program **selesai dijalankan dengan sukses tanpa ada kendala (*exit status 0*)**. Sebaliknya, jika program mengembalikan angka selain 0 (misalnya `1` atau `-1`), sistem operasi akan menganggap bahwa program berhenti karena suatu kesalahan (*error*).
+
+### Komentar (Comments)
+Di dalam kode di atas, kalian juga melihat baris seperti ini:
+```c
+// Mencetak teks ke terminal
+```
+Baris tersebut dinamakan **Komentar (*Comment*)**.
+
+Komentar adalah catatan atau penjelasan yang sengaja ditulis oleh programmer untuk dibaca oleh **manusia** (diri sendiri di masa depan atau rekan tim), bukan untuk komputer. Seluruh komentar akan **sepenuhnya diabaikan oleh compiler** dan tidak akan dieksekusi sama sekali saat program dijalankan.
+
+Di bahasa C, terdapat 2 jenis komentar:
+
+#### 1. Single-Line Comment (Komentar Satu Baris)
+Diawali dengan tanda dua garis miring (`//`). Segala teks yang kalian tulis setelah tanda `//` hingga ujung baris tersebut akan dianggap sebagai komentar.
+```c
+// Ini adalah komentar satu baris
+printf("Halo!\n"); // Komentar juga bisa diletakkan di samping baris kode
+```
+
+#### 2. Multi-Line Comment (Komentar Banyak Baris)
+Diawali dengan tanda `/*` dan ditutup dengan tanda `*/`. Cocok digunakan jika kalian ingin menulis penjelasan yang panjang atau menonaktifkan beberapa baris kode sekaligus untuk keperluan pengujian (*debugging*).
+```c
+/*
+  Ini adalah contoh komentar
+  yang terdiri dari beberapa baris.
+  Seluruh teks di dalam blok ini tidak akan dieksekusi.
+*/
+```
+
+---
+
+## Variable
+Variable adalah **nama lokasi penyimpanan di memori komputer yang digunakan untuk menampung data atau nilai yang dapat diubah dan direferensikan kembali selama program berjalan.**
+
+Biar gampang, bayangkan variabel sebagai sebuah **kotak kardus** yang diberi label nama. Kalian bisa menyimpan suatu barang (data) di dalam kotak tersebut, melihat isinya kapan saja, atau menukar isinya dengan barang baru selama jenis barangnya cocok dengan ukuran kotaknya!
+
+Sintaks dasar pembuatan variabel:
 ```c
 dataType variableName = value;
 ```
 
-Keterangan:
+*   `dataType`: Tipe data dari variabel (seperti `int`, `float`, dll). Ini ibarat **ukuran dan bentuk kotak**.
+*   `variableName`: Nama dari variabel tersebut. Ini ibarat **label nama** yang ditempel di kotak.
+*   `value`: Nilai yang dimasukkan ke dalam kotak.
 
-	`dataType`: tipe data dari variable (int, float, double, dll)
+---
 
-	`variableName`: Nama dari variabel dengan format tertentu
+### Tahapan Menggunakan Variabel
 
-	`=`: Operator untuk assign nilai `value` ke variabel
+Dalam bahasa C, terdapat beberapa cara berinteraksi dengan variabel yang perlu kalian pahami:
 
-	`value`: Nilai dari variabel
-
-### Pendefinisian Variabel
-
-Variabel harus didefnisikan terlebih dahulu sebelum digunakan pada program. Terdapat 3 cara pendefinisian variabel:
-
-#### Single Variable Declaration
-
-Metode pendefinisian untuk 1 variabel.
-
+#### 1. Deklarasi Saja (*Declaration*)
+Tahap memesan kotak di memori RAM dan memberinya label nama tanpa langsung memasukkan nilai (kotak masih kosong):
 ```c
-int x = 1;
-```
-#### Multiple Variables Declaration
-
-Metode pendefnisian untuk variabel lebih dari 1.
-
-```c
-int x = 1, y = 2, z = 3;
-```
-#### Multiple Variables Assignment
-
-Metode assignment nilai yang sama ke beberapa variabel.
-
-```c
-x = y = z = 1;
+int skor; // Komputer menyiapkan lokasi memori bernama 'skor' bertipe integer
 ```
 
-Untuk metode ini, variabel harus dideklarasikan terlebih dahulu.
+#### 2. Penugasan (*Assignment*)
+Tahap mengisi atau memperbarui nilai ke dalam variabel yang telah dideklarasikan sebelumnya menggunakan tanda sama dengan (`=`):
+```c
+int skor;   // 1. Deklarasi
+skor = 100; // 2. Assignment (mengisi nilai ke variabel)
+skor = 150; // 2. Assignment (memperbarui nilai tanpa menulis 'int' lagi)
+```
+
+#### 3. Deklarasi + Inisialisasi (*Declaration + Initialization*)
+Cara praktis yang menggabungkan tahap deklarasi sekaligus pengisian nilai awal dalam satu baris instruksi:
+```c
+int skor = 100; // Loker 'skor' langsung dipesan dan diisi nilai awal 100
+```
+
+### Aturan Penamaan Variabel
+Dalam bahasa C, kalian tidak bisa sembarangan memberi nama variabel. Ada aturan mutlak yang harus ditaati agar program kalian tidak *error* dan ditolak oleh compiler:
+
+1.  **Awali dengan huruf atau *underscore* (`_`)**. 
+    *   ✅ Benar: `umur`, `_saldo`, `nilaiTugas`
+    *   ❌ Salah: `1angka`, `2024data` (tidak boleh diawali angka!)
+2.  **Hanya boleh berisi huruf, angka, dan *underscore***. Jangan pernah menggunakan spasi atau simbol khusus seperti `@`, `#`, `!`, atau `-`.
+    *   ✅ Benar: `nama_depan`, `angka123`
+    *   ❌ Salah: `nama depan`, `email@`
+3.  **Bersifat *Case Sensitive***. Huruf besar dan kecil dianggap berbeda. Variabel `Nilai` dan `nilai` adalah dua "kotak" yang benar-benar berbeda.
+4.  **Dilarang pakai [*Reserved Words*](https://www.ibm.com/docs/en/wdfrhcw/1.4.0?topic=programs-c-reserved-keywords)**. Kalian tidak boleh menggunakan kata-kata yang sudah menjadi bawaan mutlak dari bahasa C (seperti `int`, `return`, `if`, `for`, `void`).
+
+---
 
 ## Data Types
+Kalau variabel adalah "kotaknya", maka tipe data adalah **jenis barang** apa yang boleh dimasukkan ke dalam kotak tersebut. C bersifat statically typed, ia perlu tahu tipe datanya sejak awal agar bisa menyiapkan ruang memori (*storage*) yang pas—tidak kurang dan tidak lebih.
 
-Data Types menentukan tipe dari data yang disimpan oleh variabel pada program. Data types membantu compiler untuk memahami cara menangani data tersebut pada memori.
+Berikut adalah tipe data dasar (*primitive*) dan pengubahnya (*modifiers*) yang dapat kalian gunakan di bahasa C:
 
-Berikut tabel mengenai beberapa tipe data di C:
+| Tipe Data | Deskripsi | Format Specifier | Contoh Penggunaan |
+| :--- | :--- | :--- | :--- |
+| **`char`** | Satu buah karakter (huruf, angka, simbol). Diapit kutip tunggal (`'`). | `%c` | `char nilai = 'A';` |
+| **`unsigned char`** | Karakter positif / data biner 8-bit tanpa tanda minus ($0$ s.d. $255$). | `%c` atau `%u` | `unsigned char byte = 255;` |
+| **`short`** *(short int)* | Bilangan bulat kecil (hemat memori). | `%hd` | `short tahun = 2026;` |
+| **`unsigned short`** | Bilangan bulat positif berukuran kecil ($0$ s.d. $65.535$). | `%hu` | `unsigned short port = 8080;` |
+| **`int`** | Bilangan bulat standar (integer) tanpa koma (paling sering digunakan). | `%d` atau `%i` | `int umur = 18;` |
+| **`unsigned int`** | Bilangan bulat hanya positif (kapasitas angka positif 2x lipat lebih besar). | `%u` | `unsigned int pengunjung = 50000;` |
+| **`long`** *(long int)* | Bilangan bulat berkapasitas besar untuk angka bernilai tinggi. | `%ld` | `long jarak = 1500000L;` |
+| **`unsigned long`** | Bilangan bulat besar yang hanya bernilai positif. | `%lu` | `unsigned long id = 4000000000UL;` |
+| **`long long`** | Bilangan bulat ekstra besar untuk angka miliaran/triliunan (64-bit). | `%lld` | `long long populasi = 8000000000LL;` |
+| **`unsigned long long`** | Bilangan bulat ekstra besar yang hanya bernilai positif. | `%llu` | `unsigned long long saldo = 1000000000000ULL;` |
+| **`float`** | Bilangan desimal/pecahan dengan tingkat presisi standar ($\approx 6$–$7$ digit). | `%f` | `float ipk = 3.95;` |
+| **`double`** | Bilangan desimal presisi ganda (lebih akurat daripada float, $\approx 15$–$17$ digit). | `%lf` | `double pi = 3.1415926535;` |
+| **`long double`** | Bilangan desimal presisi ultra-tinggi untuk kalkulasi saintifik. | `%Lf` | `long double konstanta = 1.23456789L;` |
+| **`bool`** *(C99)* | Nilai logika kebenaran (`true` atau `false`), butuh `#include <stdbool.h>`. | `%d` | `bool isLulus = true;` |
 
-| Tipe Data      | Deskripsi                      | Pendefinisian                               |
-| -------------- | ------------------------------ | ------------------------------------------- |
-| integer        | Menyimpan angka bulat          | int, short, long, long long, char           |
-| floating point | Menyimpan angka desimal        | float, double                               |
-| Structure      | Tipe data buatan dari pengguna | struct                                      |
-| Unsigned       | Menyimpan nilai non-negative   | unsigned int, unsigned float, unsigned char |
+### Ukuran Memori dan Rentang Nilai (Size & Value Range)
+Setiap tipe data memiliki batas kapasitasnya masing-masing. Secara umum, pada arsitektur CPU dan OS modern, ukuran untuk tipe data dasar telah distandarisasi seperti tabel berikut:
+
+![Ukuran tipe data](./img/data_types.png)
 
 
-Value Range untuk beberapa tipe data di C:
+:::tip
 
-![Data Types and Ranges and Sizes](./C-Datatypes-Range-and-Sizes.png)
+Karena bahasa C sangat bergantung dengan sistem yang kalian gunakan , kalian bisa langsung melihat ukuran memori variabel di device kalian masing-masing menggunakan fungsi bawaan `sizeof()`.
 
-Sumber: https://techbeamers.com/wp-content/uploads/2019/01/C-Datatypes-Range-and-Sizes.png
+Contoh: `printf("Ukuran int: %zu bytes\n", sizeof(int));`
+
+:::
 
 
-## C Identifiers
-
-### Identifiers
-
-Identifier merupakan nama unik untuk mengidentifikasi variabel, fungsi, ataupun item yang didefinisikan oleh pengguna. Pada variabel, identifier digunakan untuk mereferensi variabel dan nilainya (ingat bahwa variabel merupakan ruang pada memori yang menyimpan nilai).
-
-### Aturan Penulisan Identifiers
-
-- Boleh berisikan huruf, angka, dan underscore ( _ )
-- Identifier bersifat case-sensitive
-- Karakter pertama harus dimulai dengan huruf atau underscore
-- Identifier tidak boleh menggunakan reserved words yang ada (contoh reserved words di C: int, if, void)
-
-## Format Specifiers
-
-Format specifiers digunakan untuk mengindikasi tipe data dari variabel. Format specifier berfungsi sebagai placeholder untuk nilai variabel pada output.
-
-Contoh penggunaan:
-
-```c
-int x = 1;
-printf("x is %d", x); // output: x is 1
-```
-
-Contoh-contoh format specifiers:
-
-- `%d atau %i`: signed integer
-- `%ld atau %li`: long
-- `%lld atau %lli`: long long
-- `%hd`: short
-- `%f`: float
-- `%lf`: double
-- `%c`: char
-- `%u`: unsigned integer
-
+---
 
 ## Basic I/O
+Program yang diam saja tentu membosankan, bukan? Input dan output adalah cara agar program yang kita buat bisa berinteraksi dengan dunia luar, baik dengan file, program lain, atau pengguna. Untuk materi kali ini, kita hanya akan fokus membahas interaksi langsung dengan pengguna.
 
-### Output
-
-Salah satu contoh output sederhana adalah mencetak sesuatu ke terminal, seperti pada awal modul.
-
-```c
-printf("Hello World!");
-```
-
-Program akan mencetak teks `Hello World!` ke terminal.
+### Basic Output (Mencetak Data)
+Salah satu contoh output yang paling sederhana adalah mencetak tulisan ke *console* (terminal). Seperti yang telah kita bahas di awal, kita menggunakan fungsi `printf()` untuk mencetak apa pun yang kita berikan ke layar.
 
 ```c
-int x = 1;
-printf("%d", x);
+printf("Hello world!\n");
+printf("%d\n", 1234); // Format untuk mencetak angka langsung
 ```
 
-Program akan mencetak angka 1 ke terminal.
+Sejauh ini, kita baru mempelajari cara mencetak tulisan mentah atau data langsung. Lalu, bagaimana jika kita ingin mencetak **nilai yang tersimpan di dalam sebuah variabel**? Kita bisa menggunakan *Format Specifier* (konstanta format) sebagai "tempat singgah" (*placeholder*).
 
+
+**Contoh Kode:**
 ```c
-int x = 1;
-float y = 2.5;
-printf("%d and %f", x, y);
+#include <stdio.h>
+
+int main() {
+    char nama[16] = "Budi"; // Ini adalah contoh deklarasi String
+    int umur = 19;
+    float nilai = 3.89;
+
+    printf("Nama %s, umur %d tahun, dan nilai %f\n", nama, umur, nilai);
+    return 0;
+}
 ```
 
-Program akan mencetak teks `1 and 2.5` ke terminal.
+**Output di terminal:**
+```text
+Nama Budi, umur 19 tahun, dan nilai 3.890000
+```
 
-### Input
+Seperti yang dapat kita lihat, konstanta format `%s`, `%d`, dan `%f` diletakkan di dalam teks, lalu nilai aslinya disuplai secara berurutan di sebelah kanan string melalui variabel `nama`, `umur`, dan `nilai`.
 
-Pengguna dapat memberikan nilai ke program dengan menggunakan fungsi seperti `scanf()`.
+#### Mengatur Presisi Angka Desimal (*Precision Formatting*)
+Kalian mungkin memperhatikan pada *output* di atas: mengapa nilai `3.89` dicetak menjadi **`3.890000`** dengan empat angka nol tambahan di belakangnya?
 
-Contoh kode:
+Secara *default* di bahasa C, format specifier `%f` akan **selalu mencetak 6 digit angka di belakang koma**.
+
+Untuk mengatur seberapa banyak digit desimal yang ingin kita tampilkan, kita cukup menyisipkan tanda titik dan jumlah digit (**.N**) di antara simbol `%` dan `f`:
+
+| Format | Keterangan | Nilai Variabel: `3.8916` | Output yang Tampil |
+| :---: | :--- | :---: | :---: |
+| **`%f`** | Standar *default* (selalu 6 digit) | `3.8916` | `3.891600` |
+| **`%.2f`** | Membatasi tepat **2 digit** desimal | `3.8916` | `3.89` |
+| **`%.1f`** | Membatasi tepat **1 digit** desimal | `3.8916` | `3.9` |
+| **`%.0f`** | **Tanpa digit desimal** (dibulatkan) | `3.8916` | `4` |  
+### Basic Input (Menerima Data)
+Selanjutnya, kita akan mempelajari bagaimana cara meminta pengguna untuk mengisi sebuah variabel yang terdapat di program kita. Perhatikan contoh kode berikut:
 
 ```c
 #include <stdio.h>
 
-int main(){
+int main() {
+    char nama[32];
+    int umur;
 
-	int x;
-	float y;
-	
-	printf("x is: ");
-	scanf("%d", &x);
-	
-	printf("y is: ");
-	scanf("%f", &y);
-	
-	printf("x = %d and y = %f", x, y);
-	return 0;
+    printf("Masukkan nama: ");
+    scanf("%s", nama);
+
+    printf("Masukkan umur: ");
+    scanf("%d", &umur);
+
+    printf("Nama saya %s dan umur saya %d tahun\n", nama, umur);
+    return 0;
 }
 ```
+
+Dari program tersebut, terdapat kata kunci baru, yaitu **`scanf()`**. Kata kunci tersebut merupakan sebuah fungsi untuk menangkap masukan/input pengguna dari *console* menggunakan format atau *placeholder* yang sama persis dengan yang dipakai di fungsi `printf()`.
+
+*   `scanf("%s", nama);` -> Menangkap input teks dan memindahkannya ke variabel `nama`.
+*   `scanf("%d", &umur);` -> Menangkap input angka bulat dan memindahkannya ke variabel `umur`.
+
+Mengapa Butuh Ampersand (`&`)?
+Kalian pasti menyadari ada simbol ampersand (`&`) di depan variabel tipe data *integer* (`&umur`). Simbol `&` berfungsi sebagai penunjuk "Alamat Memori". Fungsi `scanf()` itu seperti kurir paket; ia tidak hanya butuh tahu "apa isi barangnya", tapi butuh **"alamat rumah pasti"** agar barang (input) tersebut bisa diletakkan tepat ke dalam memori komputer kalian.
+
+*Lalu kenapa variabel string (`nama`) tidak butuh `&`?* Karena variabel jenis *array* (seperti `char nama[32]`) pada dasarnya memang sudah menyimpan referensi alamat memori secara default.
+
+:::warning[Kelemahan `scanf()` pada Teks]
+Fungsi `scanf()` yang kita gunakan ini memiliki sedikit kelemahan: ia tidak bisa menerima string (kalimat) yang menggunakan spasi. Saat kalian mengetik "Budi Santoso", `scanf("%s")` akan berhenti membaca saat bertemu spasi pertama, sehingga yang tersimpan hanya "Budi". Namun tenang saja, kita akan tetap menggunakan metode ini untuk sekarang, dan akan belajar cara mengatasinya nanti!
+:::
