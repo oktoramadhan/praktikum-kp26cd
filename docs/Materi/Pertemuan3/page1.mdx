@@ -1,0 +1,165 @@
+---
+title: Conditionals
+sidebar_position: 1
+toc_min_heading_level: 2
+toc_max_heading_level: 6
+---
+
+## Definisi
+
+**Conditional** (atau pemilihan) adalah tindakan yang dilakukan oleh program ketika dihadapkan pada beberapa kondisi. Tiap-tiap kondisi akan menyebabkan program untuk melakukan tindakan yang berbeda ketika kondisi tersebut terpenuhi. Conditional merupakan hal yang esensial dalam decision-making pada pemrograman.
+
+Pada C, terdapat 3 metode conditional utama yang dapat digunakan:
+### If... Else
+
+Metode ini merupakan metode yang paling sering digunakan.
+
+```c
+if(condition_1){
+	// Instruction
+}
+else if(condition_2){
+	// Instruction
+}
+else if(condition_3){
+	// Instruction
+}
+else{
+	// Instruction
+}
+```
+
+Terdapat 3 keyword pada blok kode di atas:
+ - **if**: Keyword ini digunakan untuk menjalankan perintah di dalam blok ketika kondisi bernilai benar
+ - **else if**: Sama seperti pada **if**, namun hanya dijalankan ketika pengecekan sebelumnya bernilai salah
+ - **else**: Keyword ini akan menjalankan perintah ketika semua kondisi bernilai salah.
+
+Sebagai catatan, if-else conditional tidak perlu ada **else** maupun **else if**.
+
+Contoh:
+
+```c
+int a, b;
+if(a > b){
+	printf("a > b\n");
+}
+else if(a < b){
+	printf("a > b\n");
+}
+else{
+	printf("a == b");
+}
+```
+
+Kasus:
+- `a = 1, b = 0` -> kondisi pada if akan bernilai benar, sehingga blok kode di dalam if akan dijalankan dengan output di terminal: `a > b`
+-  `a = 0, b = 1` -> kondisi pada if akan bernilai salah, program pindah ke pengecekan kondisi di else if. Kondisi di dalam else if bernilai benar, sehingga blok kode di dalam if akan dijalankan dengan output di terminal
+- `a = 1, b = 1` -> kondisi pada  if dan else if akan bernilai salah, program langsung menjalankan blok kode di dalam else
+
+### Switch Case
+Metode ini digunakan ketika ada banyak pengecekan yang ingin dilakukan.
+
+```c
+switch (expression){
+case value1:
+	// Instruction
+	break;
+case value2:
+	// Instruction
+	break;
+default:
+	// Instruction
+	break;
+}
+```
+
+Terdapat 4 keyword pada blok kode di atas:
+- **switch**: Digunakan untuk memulai pengecekan pada **switch case** dengan nilai yang ingin dicek adalah sebuah ekspresi.
+- **case**: Digunakan untuk mengecek apakah ekspresi yang diberikan sama dengan nilai pada **case** tersebut. Bila iya, maka kode akan dijalankan hingga program mencapai keyword **break**
+- **break**: Seperti pada penjelasan di **case**, **break** akan menghentikan **switch case** secara total sehingga **case** setelah itu tidak akan dijalankan
+- **default**: Sama seperti pada **else**, keyword ini akan dijalankan ketika kondisi pada semua **case** bernilai salah dan tidak wajib ada.
+
+Contoh:
+
+```c
+int a;
+switch(a){
+case 1:
+	printf("a == 1\n");
+	break;
+case 2:
+	printf("a == 2\n");
+	break;
+default:
+	printf("a tidak diketahui");
+}
+```
+
+Kasus:
+- `a = 1` -> Nilai case pertama akan sama, sehingga program menjalankan blok kode pada case pertama. Output di terminal adalah `a == 1`
+- `a = 2` -> Nilai case pertama berbeda, maka program langsung mengecek nilai case kedua. Karena sama, program menjalankan blok kode pada case kedua. Output di terminal adalah `a == 2`
+- `a = 3` -> Nilai case pertama dan kedua berbeda. Karena tidak ada nilai case lagi yang bisa dicek, program otomatis menjalankan blok kode pada default. Output di terminal adalah `a tidak diketahui`
+
+### Ternary Operator
+
+Ternary operator merupakan bentuk singkat dari **if... else** yang hanya bisa memilih salah satu dari beberapa nilai berdasarkan kondisi.
+
+```c
+int var = (condition) ? value_1 : value_2;
+
+(expression_1) ? instruction_1 
+	: (expression_2) ? instruction_2
+		: instruction_3;
+
+
+```
+
+Pada bagian inisialisasi variabel, program mengecek nilai dari ekspresi. Bila kondisi bernilai benar, maka var diberikan nilai value_1. Jika tidak, var diberikan var_2.
+
+Pada bagian kedua, program mengecek nilai dari ekspression_1. Bila benar, program menjalankan instruction_1. Bila tidak, program mengecek ekspression_2.
+
+Bila ekspression_2 bernilai benar, program menjalankan instruction_2. Bila tidak, program menjalankan instruction_3.
+
+Pada blok kode di atas, value_2 dan instruction_3 bekerja seperti pada blok kode else di pemilihan if... else.
+
+Contoh:
+
+```c
+int a;
+int b = (a > 1) ? 2 : 0;
+
+(a > b) ? printf(" a > b\n") :
+	(a < b) ? printf(" a < b\n") : 
+	printf("a == b");
+```
+
+Kasus:
+- `a = 1` -> `b = 0`. Pada bagian kedua, program akan mencetak `printf("a < b)`
+- `a = 2` -> `b = 2`. Pada bagian kedua, program akan mencetak `printf("a == b)`
+- `a = 3` -> `b = 2`. Pada bagian kedua, program akan mencetak `printf("a > b)`
+
+## Pemilihan bersarang
+
+Pemilihan dapat dilakukan secara bersarang. Artinya, di dalam conditional, bisa terdapat conditional lagi. Namun, metode ini lebih baik untuk dihindari agar memudahkan dalam membaca kode.
+
+```c
+if(expression1){
+	if(expression2){
+	// Instruction
+	}
+	else{
+	// Instruction
+	}
+}
+else if(expression3){
+	if(expression4){
+	 // Instruction
+	}
+	else{
+	// Instruction
+	}
+}
+else{
+ // Instruction
+}
+```
