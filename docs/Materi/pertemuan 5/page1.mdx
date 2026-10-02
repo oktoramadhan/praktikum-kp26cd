@@ -1,0 +1,2420 @@
+---
+title: Loops (for, while, do-while, nested loops)
+sidebar_position: 1
+toc_min_heading_level: 2
+toc_max_heading_level: 6
+---
+
+# Control Flow: Loop
+
+Pada materi sebelumnya, kita telah mempelajari bagaimana program dapat
+mengambil keputusan menggunakan **conditional statement**.
+
+Namun, bagaimana jika kita ingin menjalankan sebuah instruksi
+berulang kali?
+
+Misalnya kita ingin mencetak teks `"Hello"` sebanyak lima kali.
+
+Tanpa menggunakan loop, kita dapat menulis:
+
+```c
+printf("Hello\n");
+printf("Hello\n");
+printf("Hello\n");
+printf("Hello\n");
+printf("Hello\n");
+```
+
+Cara tersebut memang dapat bekerja, tetapi akan menjadi tidak praktis
+jika kita ingin menjalankan instruksi yang sama puluhan, ratusan,
+atau bahkan ribuan kali.
+
+Untuk mengatasi masalah tersebut, kita dapat menggunakan **Loop**.
+
+---
+
+## Apa itu Loop?
+
+**Loop** adalah sebuah _control structure_ yang digunakan untuk
+menjalankan sebuah blok kode secara berulang.
+
+Dengan loop, kita tidak perlu menulis instruksi yang sama berkali-kali.
+
+Sebagai contoh, kode berikut:
+
+```c
+printf("Hello\n");
+printf("Hello\n");
+printf("Hello\n");
+printf("Hello\n");
+printf("Hello\n");
+```
+
+dapat ditulis menggunakan sebuah loop:
+
+```c
+for (int i = 0; i < 5; i++) {
+    printf("Hello\n");
+}
+```
+
+Kedua program tersebut akan menghasilkan output yang sama:
+
+```text
+Hello
+Hello
+Hello
+Hello
+Hello
+```
+
+Namun versi yang menggunakan loop lebih singkat dan lebih mudah
+untuk dikembangkan.
+
+### Mengapa Loop Dibutuhkan?
+
+Loop membantu kita menghindari penulisan kode yang sama secara
+berulang-ulang.
+
+Sebagai contoh, bayangkan kita ingin mencetak:
+
+```text
+Hello
+```
+
+sebanyak `100` kali.
+
+Menulis:
+
+```c
+printf("Hello\n");
+```
+
+sebanyak seratus baris tentu bukan cara yang efektif.
+
+Dengan loop, kita cukup menulis:
+
+```c
+for (int i = 0; i < 100; i++) {
+    printf("Hello\n");
+}
+```
+
+Loop membuat kode menjadi:
+
+- Lebih singkat.
+- Mengurangi pengulangan kode (_code redundancy_).
+- Lebih mudah dibaca.
+- Lebih mudah diubah dan dipelihara.
+
+---
+
+## Jenis Loop pada C
+
+Dalam bahasa C, terdapat tiga jenis loop utama yang akan kita pelajari:
+
+| Loop       | Kegunaan Umum                                               |
+| :--------- | :---------------------------------------------------------- |
+| `for`      | Digunakan ketika jumlah perulangan sudah diketahui          |
+| `while`    | Digunakan ketika perulangan bergantung pada suatu kondisi   |
+| `do-while` | Digunakan ketika kode harus dijalankan setidaknya satu kali |
+
+Ketiga loop tersebut memiliki tujuan yang sama, yaitu **mengulangi
+sebuah blok kode**.
+
+Perbedaannya terletak pada bagaimana kondisi perulangan ditulis
+dan kapan kondisi tersebut diperiksa.
+
+Kita akan mempelajarinya satu per satu.
+
+---
+
+## For Loop
+
+**For Loop** adalah salah satu bentuk perulangan yang umum digunakan
+ketika kita sudah mengetahui berapa kali sebuah proses akan dilakukan.
+
+Sintaks dasar `for` adalah:
+
+```c
+for (initialization; condition; increment/decrement) {
+    // code to be executed
+}
+```
+
+Perhatikan bahwa di dalam tanda kurung `for` terdapat tiga komponen:
+
+```text
+initialization
+condition
+increment / decrement
+```
+
+Contoh:
+
+```c
+for (int i = 0; i < 5; i++) {
+    printf("%d\n", i);
+}
+```
+
+Mari kita pahami masing-masing bagiannya.
+
+---
+
+### Syntax For Loop
+
+Struktur dasar sebuah `for` loop:
+
+```c
+for (initialization; condition; increment/decrement) {
+    // code
+}
+```
+
+Jika kita menggunakan:
+
+```c
+for (int i = 0; i < 5; i++)
+```
+
+maka dapat kita pecah menjadi:
+
+```text
+int i = 0    → Initialization
+
+i < 5        → Condition
+
+i++          → Increment
+```
+
+Secara visual:
+
+```text
+for (int i = 0; i < 5; i++)
+     ─────────  ─────  ───
+         │        │     │
+         │        │     └── Increment
+         │        │
+         │        └──────── Condition
+         │
+         └───────────────── Initialization
+```
+
+---
+
+### Komponen For Loop
+
+#### 1. Initialization
+
+**Initialization** digunakan untuk menentukan nilai awal dari
+variabel yang akan mengontrol loop.
+
+Contoh:
+
+```c
+int i = 0;
+```
+
+Pada:
+
+```c
+for (int i = 0; i < 5; i++)
+```
+
+variabel `i` dimulai dari:
+
+```text
+0
+```
+
+Initialization hanya dilakukan **satu kali**, yaitu ketika loop
+pertama kali dimulai.
+
+---
+
+#### 2. Condition
+
+**Condition** menentukan apakah loop masih boleh dilanjutkan.
+
+Contoh:
+
+```c
+i < 5
+```
+
+Selama kondisi tersebut bernilai benar, blok kode di dalam loop
+akan terus dijalankan.
+
+Misalnya:
+
+```text
+i = 0 → 0 < 5 → True
+i = 1 → 1 < 5 → True
+i = 2 → 2 < 5 → True
+i = 3 → 3 < 5 → True
+i = 4 → 4 < 5 → True
+i = 5 → 5 < 5 → False
+```
+
+Ketika kondisi menjadi `false`, loop berhenti.
+
+---
+
+#### 3. Increment / Decrement
+
+Setelah satu iterasi selesai, nilai variabel loop biasanya diubah.
+
+Contoh:
+
+```c
+i++;
+```
+
+Operator tersebut menambah nilai `i` sebesar `1`.
+
+Sehingga:
+
+```text
+0 → 1 → 2 → 3 → 4 → 5
+```
+
+Selain increment, kita juga dapat menggunakan decrement.
+
+Contoh:
+
+```c
+i--;
+```
+
+yang akan mengurangi nilai `i` sebesar `1`.
+
+---
+
+### Cara Kerja For Loop
+
+Sekarang perhatikan kembali program berikut:
+
+```c
+#include <stdio.h>
+
+int main() {
+    for (int i = 0; i < 5; i++) {
+        printf("%d\n", i);
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+0
+1
+2
+3
+4
+```
+
+Mari kita lihat prosesnya.
+
+Nilai awal:
+
+```text
+i = 0
+```
+
+Kemudian komputer memeriksa:
+
+```text
+i < 5
+```
+
+Karena:
+
+```text
+0 < 5 → True
+```
+
+maka:
+
+```c
+printf("%d\n", i);
+```
+
+dijalankan dan menghasilkan:
+
+```text
+0
+```
+
+Setelah itu:
+
+```c
+i++;
+```
+
+dijalankan sehingga:
+
+```text
+i = 1
+```
+
+Proses kemudian diulang:
+
+```text
+i = 0 → kondisi true → cetak 0
+i = 1 → kondisi true → cetak 1
+i = 2 → kondisi true → cetak 2
+i = 3 → kondisi true → cetak 3
+i = 4 → kondisi true → cetak 4
+i = 5 → kondisi false → loop berhenti
+```
+
+Secara sederhana, alurnya dapat kita bayangkan sebagai:
+
+```text
+Initialization
+      ↓
+   Condition
+      ↓
+ ┌── True ──────────────┐
+ │                      │
+ │                Jalankan Code
+ │                      │
+ │              Increment/Decrement
+ │                      │
+ └──────────────────────┘
+      ↓
+    False
+      ↓
+Loop Selesai
+```
+
+---
+
+### Contoh Program For Loop
+
+Misalnya kita ingin mencetak angka dari `1` sampai `5`.
+
+```c
+#include <stdio.h>
+
+int main() {
+    for (int i = 1; i <= 5; i++) {
+        printf("%d\n", i);
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+1
+2
+3
+4
+5
+```
+
+Perhatikan bahwa kali ini initialization dimulai dari:
+
+```c
+int i = 1;
+```
+
+dan kondisi yang digunakan adalah:
+
+```c
+i <= 5;
+```
+
+Karena kita ingin angka `5` masih ikut dicetak.
+
+---
+
+### For Loop dengan Decrement
+
+For loop tidak harus selalu menghitung naik.
+
+Kita juga dapat melakukan perulangan dari nilai besar menuju nilai
+yang lebih kecil menggunakan decrement.
+
+Contoh:
+
+```c
+#include <stdio.h>
+
+int main() {
+    for (int i = 5; i >= 1; i--) {
+        printf("%d\n", i);
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+5
+4
+3
+2
+1
+```
+
+Pada contoh tersebut:
+
+```text
+Initialization : int i = 5
+Condition      : i >= 1
+Decrement      : i--
+```
+
+Sehingga nilai `i` berubah:
+
+```text
+5 → 4 → 3 → 2 → 1
+```
+
+---
+
+### Kapan Menggunakan For Loop?
+
+`for` loop cocok digunakan ketika jumlah perulangan sudah diketahui
+sebelumnya.
+
+Contohnya:
+
+```text
+Mencetak angka dari 1 sampai 10.
+
+Mencetak "Hello" sebanyak 5 kali.
+
+Melakukan proses sebanyak 100 kali.
+
+Melakukan perhitungan dalam batas tertentu.
+```
+
+Sebagai contoh:
+
+```c
+for (int i = 1; i <= 10; i++) {
+    printf("%d\n", i);
+}
+```
+
+Dari awal kita sudah mengetahui bahwa loop akan berjalan sebanyak
+`10` kali.
+
+:::tip
+Ketika kalian sudah mengetahui **berapa kali** sebuah proses perlu
+diulang, `for` loop biasanya menjadi pilihan yang paling mudah
+digunakan.
+:::
+
+---
+
+## While Loop
+
+**While Loop** adalah bentuk perulangan yang akan terus menjalankan
+sebuah blok kode selama kondisi yang diberikan masih bernilai benar.
+
+Sintaks dasarnya:
+
+```c
+while (condition) {
+    // code to be executed
+}
+```
+
+Berbeda dengan `for` loop, pada `while` loop initialization dan
+perubahan nilai variabel biasanya ditulis secara terpisah.
+
+Contoh:
+
+```c
+int i = 0;
+
+while (i < 5) {
+    printf("%d\n", i);
+    i++;
+}
+```
+
+Pada contoh tersebut:
+
+```text
+Initialization : int i = 0
+Condition      : i < 5
+Increment      : i++
+```
+
+Ketiga bagian tersebut tetap ada, tetapi tidak ditulis dalam satu
+baris seperti pada `for` loop.
+
+---
+
+### Syntax While Loop
+
+Struktur dasar `while` loop adalah:
+
+```c
+while (condition) {
+    // code
+}
+```
+
+Sebelum blok kode dijalankan, kondisi akan diperiksa terlebih dahulu.
+
+Jika kondisi bernilai:
+
+```text
+True
+```
+
+maka blok kode di dalam `while` akan dijalankan.
+
+Jika kondisi bernilai:
+
+```text
+False
+```
+
+maka loop akan berhenti.
+
+---
+
+### Cara Kerja While Loop
+
+Perhatikan program berikut:
+
+```c
+#include <stdio.h>
+
+int main() {
+    int i = 0;
+
+    while (i < 5) {
+        printf("%d\n", i);
+        i++;
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+0
+1
+2
+3
+4
+```
+
+Mari kita lihat prosesnya.
+
+Nilai awal:
+
+```text
+i = 0
+```
+
+Kemudian kondisi diperiksa:
+
+```text
+i < 5
+```
+
+Iterasi pertama:
+
+```text
+i = 0
+
+0 < 5 → True
+
+Cetak 0
+
+i++ → i = 1
+```
+
+Iterasi berikutnya:
+
+```text
+i = 1
+
+1 < 5 → True
+
+Cetak 1
+
+i++ → i = 2
+```
+
+Proses tersebut terus berulang sampai:
+
+```text
+i = 5
+```
+
+Kemudian:
+
+```text
+5 < 5 → False
+```
+
+sehingga loop berhenti.
+
+Secara sederhana:
+
+```text
+Initialization
+      ↓
+   Condition
+      ↓
+ ┌── True ──────────────┐
+ │                      │
+ │                Jalankan Code
+ │                      │
+ │               Update Variable
+ │                      │
+ └──────────────────────┘
+      ↓
+    False
+      ↓
+Loop Selesai
+```
+
+---
+
+### Pentingnya Mengubah Nilai Variabel
+
+Perhatikan kode berikut:
+
+```c
+int i = 0;
+
+while (i < 5) {
+    printf("%d\n", i);
+}
+```
+
+Pada kode tersebut, nilai `i` tidak pernah berubah.
+
+Nilainya akan selalu:
+
+```text
+i = 0
+```
+
+dan kondisi:
+
+```text
+i < 5
+```
+
+akan selalu bernilai benar.
+
+Akibatnya, program akan terus mencetak:
+
+```text
+0
+0
+0
+0
+0
+...
+```
+
+tanpa berhenti.
+
+Kondisi seperti ini disebut **Infinite Loop**.
+
+Kita akan membahas infinite loop lebih lanjut pada bagian
+**Common Errors pada Loop**.
+
+:::warning
+Pastikan kondisi pada `while` loop memiliki kemungkinan untuk menjadi
+`false`.
+
+Jika nilai yang digunakan dalam kondisi tidak pernah berubah, loop
+dapat berjalan terus-menerus.
+:::
+
+---
+
+### Contoh Program While Loop
+
+Misalnya kita ingin mencetak angka dari `1` sampai `5`.
+
+```c
+#include <stdio.h>
+
+int main() {
+    int angka = 1;
+
+    while (angka <= 5) {
+        printf("%d\n", angka);
+        angka++;
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+1
+2
+3
+4
+5
+```
+
+Pada program tersebut:
+
+```text
+Nilai awal : angka = 1
+
+Kondisi    : angka <= 5
+
+Update     : angka++
+```
+
+Selama:
+
+```text
+angka <= 5
+```
+
+masih bernilai benar, loop akan terus berjalan.
+
+---
+
+### While Loop dengan Input
+
+`while` juga dapat digunakan ketika perulangan bergantung pada
+suatu kondisi yang belum diketahui jumlah pengulangannya.
+
+Sebagai contoh:
+
+```c
+#include <stdio.h>
+
+int main() {
+    int angka;
+
+    printf("Masukkan angka positif: ");
+    scanf("%d", &angka);
+
+    while (angka > 0) {
+        printf("Angka: %d\n", angka);
+
+        printf("Masukkan angka positif: ");
+        scanf("%d", &angka);
+    }
+
+    return 0;
+}
+```
+
+Program akan terus meminta input selama nilai yang dimasukkan lebih
+besar dari `0`.
+
+Jumlah perulangan tidak diketahui sejak awal karena bergantung pada
+input pengguna.
+
+---
+
+### Kapan Menggunakan While Loop?
+
+`while` loop cocok digunakan ketika jumlah perulangan **belum diketahui
+sebelumnya**.
+
+Loop akan terus berjalan selama sebuah kondisi masih bernilai benar.
+
+Contohnya:
+
+```text
+Membaca input sampai kondisi tertentu tercapai.
+
+Menunggu input pengguna.
+
+Melakukan pemeriksaan sampai kondisi menjadi false.
+
+Mengulangi proses selama sebuah syarat masih terpenuhi.
+```
+
+:::tip
+Jika kalian tidak mengetahui dengan pasti **berapa kali** sebuah proses
+akan diulang, tetapi mengetahui **kondisi kapan loop harus berhenti**,
+`while` biasanya menjadi pilihan yang sesuai.
+:::
+
+---
+
+## Do-While Loop
+
+**Do-While Loop** adalah bentuk perulangan yang mirip dengan `while`,
+tetapi memiliki satu perbedaan penting.
+
+Pada `do-while`, blok kode akan dijalankan terlebih dahulu.
+
+Setelah itu, kondisi baru diperiksa.
+
+Sintaks dasarnya:
+
+```c
+do {
+    // code to be executed
+} while (condition);
+```
+
+Perhatikan bahwa setelah:
+
+```c
+while (condition)
+```
+
+terdapat tanda:
+
+```text
+;
+```
+
+---
+
+### Syntax Do-While Loop
+
+Struktur dasar `do-while`:
+
+```c
+do {
+    // code
+} while (condition);
+```
+
+Berbeda dengan `while`:
+
+```c
+while (condition) {
+    // code
+}
+```
+
+Pada `while`, kondisi diperiksa **sebelum** blok kode dijalankan.
+
+Sedangkan pada `do-while`, blok kode dijalankan **terlebih dahulu**,
+baru kemudian kondisi diperiksa.
+
+---
+
+### Cara Kerja Do-While Loop
+
+Perhatikan program berikut:
+
+```c
+#include <stdio.h>
+
+int main() {
+    int i = 0;
+
+    do {
+        printf("%d\n", i);
+        i++;
+    } while (i < 5);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+0
+1
+2
+3
+4
+```
+
+Nilai awal:
+
+```text
+i = 0
+```
+
+Kemudian blok `do` langsung dijalankan:
+
+```text
+Cetak 0
+```
+
+Setelah itu:
+
+```c
+i++;
+```
+
+sehingga:
+
+```text
+i = 1
+```
+
+Barulah kondisi diperiksa:
+
+```text
+1 < 5 → True
+```
+
+Karena kondisi masih benar, program kembali menjalankan blok `do`.
+
+Proses tersebut terus berjalan hingga:
+
+```text
+i = 5
+```
+
+Kemudian kondisi:
+
+```text
+5 < 5
+```
+
+bernilai:
+
+```text
+False
+```
+
+dan loop berhenti.
+
+---
+
+### Perbedaan While dan Do-While
+
+Perbedaan utama keduanya terletak pada **kapan kondisi diperiksa**.
+
+| `while`                           | `do-while`                           |
+| :-------------------------------- | :----------------------------------- |
+| Kondisi diperiksa terlebih dahulu | Blok kode dijalankan terlebih dahulu |
+| Bisa tidak dijalankan sama sekali | Selalu dijalankan minimal satu kali  |
+| Condition berada di awal          | Condition berada di akhir            |
+
+Perhatikan contoh berikut.
+
+#### While
+
+```c
+int angka = 10;
+
+while (angka < 5) {
+    printf("Hello\n");
+}
+```
+
+Kondisi pertama:
+
+```text
+10 < 5 → False
+```
+
+Karena langsung false, kode:
+
+```c
+printf("Hello\n");
+```
+
+tidak pernah dijalankan.
+
+Sehingga program tidak menghasilkan output dari loop tersebut.
+
+---
+
+#### Do-While
+
+Sekarang gunakan kondisi yang sama:
+
+```c
+int angka = 10;
+
+do {
+    printf("Hello\n");
+} while (angka < 5);
+```
+
+Meskipun:
+
+```text
+10 < 5 → False
+```
+
+output tetap:
+
+```text
+Hello
+```
+
+Mengapa?
+
+Karena blok:
+
+```c
+do {
+    ...
+}
+```
+
+dijalankan **sebelum kondisi diperiksa**.
+
+Setelah mencetak `"Hello"`, barulah kondisi:
+
+```text
+angka < 5
+```
+
+diperiksa dan ternyata false.
+
+Loop kemudian berhenti.
+
+---
+
+### Contoh Program Do-While
+
+Misalnya kita membuat program sederhana untuk meminta sebuah angka.
+
+```c
+#include <stdio.h>
+
+int main() {
+    int angka;
+
+    do {
+        printf("Masukkan angka positif: ");
+        scanf("%d", &angka);
+    } while (angka <= 0);
+
+    printf("Angka yang dimasukkan: %d\n", angka);
+
+    return 0;
+}
+```
+
+Jika pengguna memasukkan:
+
+```text
+-3
+```
+
+kondisi:
+
+```text
+angka <= 0
+```
+
+masih benar sehingga program meminta input kembali.
+
+Contoh proses:
+
+```text
+Masukkan angka positif: -3
+Masukkan angka positif: 0
+Masukkan angka positif: 5
+Angka yang dimasukkan: 5
+```
+
+Loop berhenti setelah pengguna memasukkan angka positif.
+
+---
+
+### Kapan Menggunakan Do-While Loop?
+
+`do-while` digunakan ketika sebuah blok kode harus dijalankan
+**setidaknya satu kali**, terlepas dari kondisi awal.
+
+Contohnya:
+
+```text
+Menampilkan menu.
+
+Meminta input dari pengguna.
+
+Melakukan validasi input.
+
+Menjalankan proses awal sebelum kondisi diperiksa.
+```
+
+:::tip
+Gunakan `do-while` ketika suatu proses memang harus dilakukan
+setidaknya satu kali sebelum kalian menentukan apakah proses tersebut
+perlu diulang.
+:::
+
+---
+
+### Ringkasan For, While, dan Do-While
+
+Sekarang kita telah mengenal tiga jenis loop utama pada bahasa C.
+
+| Loop       | Kondisi Umum Penggunaan                                       |
+| :--------- | :------------------------------------------------------------ |
+| `for`      | Jumlah perulangan telah diketahui                             |
+| `while`    | Jumlah perulangan belum diketahui dan bergantung pada kondisi |
+| `do-while` | Blok harus dijalankan minimal satu kali                       |
+
+Contoh sederhana:
+
+```text
+for
+→ "Ulangi ini sebanyak 10 kali."
+
+while
+→ "Ulangi selama kondisi masih benar."
+
+do-while
+→ "Lakukan dulu, kemudian ulangi jika kondisi masih benar."
+```
+
+Ketiga loop tersebut dapat menyelesaikan banyak permasalahan yang sama.
+
+Pemilihan jenis loop biasanya dilakukan berdasarkan bentuk masalah dan
+cara yang paling mudah untuk membaca serta memahami program.
+
+---
+
+## Loop Control Statements
+
+Selain mengatur perulangan menggunakan condition, kita juga dapat
+mengontrol jalannya loop menggunakan **Loop Control Statements**.
+
+Pada bahasa C, dua control statement yang akan kita pelajari adalah:
+
+```text
+break
+continue
+```
+
+Keduanya digunakan untuk mengubah alur normal sebuah loop.
+
+| Statement  | Fungsi                                                     |
+| :--------- | :--------------------------------------------------------- |
+| `break`    | Menghentikan loop secara langsung                          |
+| `continue` | Melewati iterasi saat ini dan lanjut ke iterasi berikutnya |
+
+---
+
+### Break
+
+Statement `break` digunakan untuk **menghentikan loop secara langsung**,
+meskipun condition loop sebenarnya masih bernilai benar.
+
+Perhatikan contoh berikut:
+
+```c
+#include <stdio.h>
+
+int main() {
+    for (int i = 0; i < 10; i++) {
+        if (i == 5) {
+            break;
+        }
+
+        printf("%d\n", i);
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+0
+1
+2
+3
+4
+```
+
+Loop tersebut sebenarnya memiliki condition:
+
+```c
+i < 10
+```
+
+Artinya, tanpa `break`, nilai `i` seharusnya berjalan:
+
+```text
+0 1 2 3 4 5 6 7 8 9
+```
+
+Namun di dalam loop terdapat:
+
+```c
+if (i == 5) {
+    break;
+}
+```
+
+Ketika:
+
+```text
+i = 5
+```
+
+condition:
+
+```c
+i == 5
+```
+
+menjadi:
+
+```text
+True
+```
+
+sehingga statement:
+
+```c
+break;
+```
+
+dijalankan.
+
+Loop kemudian langsung berhenti.
+
+Secara sederhana:
+
+```text
+i = 0 → cetak 0
+i = 1 → cetak 1
+i = 2 → cetak 2
+i = 3 → cetak 3
+i = 4 → cetak 4
+i = 5 → break → loop berhenti
+```
+
+Perhatikan bahwa angka `5` tidak ikut dicetak karena `break`
+dijalankan sebelum:
+
+```c
+printf("%d\n", i);
+```
+
+---
+
+### Break pada While Loop
+
+`break` tidak hanya dapat digunakan pada `for` loop.
+
+Statement ini juga dapat digunakan pada `while` dan `do-while`.
+
+Contoh:
+
+```c
+#include <stdio.h>
+
+int main() {
+    int angka = 1;
+
+    while (angka <= 10) {
+        if (angka == 6) {
+            break;
+        }
+
+        printf("%d\n", angka);
+        angka++;
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+1
+2
+3
+4
+5
+```
+
+Ketika:
+
+```text
+angka = 6
+```
+
+loop langsung dihentikan.
+
+:::info
+`break` berguna ketika kita ingin menghentikan sebuah loop lebih awal
+setelah kondisi tertentu terpenuhi.
+:::
+
+---
+
+### Continue
+
+Berbeda dengan `break`, statement `continue` **tidak menghentikan
+seluruh loop**.
+
+`continue` hanya melewati sisa kode pada **iterasi saat ini**,
+kemudian melanjutkan ke iterasi berikutnya.
+
+Perhatikan contoh berikut:
+
+```c
+#include <stdio.h>
+
+int main() {
+    for (int i = 0; i < 5; i++) {
+        if (i == 2) {
+            continue;
+        }
+
+        printf("%d\n", i);
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+0
+1
+3
+4
+```
+
+Saat:
+
+```text
+i = 2
+```
+
+condition berikut bernilai benar:
+
+```c
+i == 2
+```
+
+sehingga:
+
+```c
+continue;
+```
+
+dijalankan.
+
+Akibatnya, kode:
+
+```c
+printf("%d\n", i);
+```
+
+pada iterasi tersebut dilewati.
+
+Namun loop **tidak berhenti**.
+
+Setelah itu, loop tetap lanjut ke:
+
+```text
+i = 3
+```
+
+dan:
+
+```text
+i = 4
+```
+
+---
+
+### Perbedaan Break dan Continue
+
+Perhatikan perbedaannya:
+
+```text
+break
+→ hentikan seluruh loop
+
+continue
+→ lewati iterasi saat ini
+→ lanjut ke iterasi berikutnya
+```
+
+Contoh:
+
+```c
+for (int i = 0; i < 5; i++) {
+    if (i == 2) {
+        break;
+    }
+
+    printf("%d\n", i);
+}
+```
+
+menghasilkan:
+
+```text
+0
+1
+```
+
+Sedangkan:
+
+```c
+for (int i = 0; i < 5; i++) {
+    if (i == 2) {
+        continue;
+    }
+
+    printf("%d\n", i);
+}
+```
+
+menghasilkan:
+
+```text
+0
+1
+3
+4
+```
+
+Jadi:
+
+| Statement  | Apa yang terjadi ketika dijalankan? |
+| :--------- | :---------------------------------- |
+| `break`    | Keluar dari loop                    |
+| `continue` | Lewati iterasi saat ini             |
+
+---
+
+## Nested Loop
+
+**Nested Loop** adalah sebuah loop yang berada di dalam loop lainnya.
+
+Artinya, kita memiliki:
+
+```text
+Outer Loop
+    ↓
+Inner Loop
+```
+
+Contoh struktur sederhananya:
+
+```c
+for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 2; j++) {
+        printf("Hello\n");
+    }
+}
+```
+
+Loop pertama:
+
+```c
+for (int i = 0; i < 3; i++)
+```
+
+disebut **outer loop**.
+
+Sedangkan loop di dalamnya:
+
+```c
+for (int j = 0; j < 2; j++)
+```
+
+disebut **inner loop**.
+
+---
+
+### Cara Kerja Nested Loop
+
+Hal terpenting dalam memahami nested loop adalah:
+
+> Setiap satu iterasi outer loop, inner loop akan dijalankan sampai
+> selesai.
+
+Perhatikan:
+
+```c
+for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 2; j++) {
+        printf("Hello\n");
+    }
+}
+```
+
+Outer loop berjalan:
+
+```text
+i = 0
+i = 1
+i = 2
+```
+
+Jadi outer loop memiliki:
+
+```text
+3 iterasi
+```
+
+Sedangkan inner loop berjalan:
+
+```text
+j = 0
+j = 1
+```
+
+atau:
+
+```text
+2 iterasi
+```
+
+Untuk **setiap satu iterasi outer loop**, inner loop berjalan sebanyak
+dua kali.
+
+Sehingga jumlah keseluruhan eksekusi:
+
+```text
+3 × 2 = 6
+```
+
+Maka:
+
+```c
+printf("Hello\n");
+```
+
+akan dijalankan sebanyak:
+
+```text
+6 kali
+```
+
+---
+
+### Melihat Nilai Outer dan Inner Loop
+
+Agar lebih mudah memahami prosesnya, kita dapat mencetak nilai `i`
+dan `j`.
+
+```c
+#include <stdio.h>
+
+int main() {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 2; j++) {
+            printf("i = %d, j = %d\n", i, j);
+        }
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+i = 0, j = 0
+i = 0, j = 1
+i = 1, j = 0
+i = 1, j = 1
+i = 2, j = 0
+i = 2, j = 1
+```
+
+Perhatikan polanya.
+
+Ketika:
+
+```text
+i = 0
+```
+
+inner loop menyelesaikan:
+
+```text
+j = 0
+j = 1
+```
+
+Setelah inner loop selesai, outer loop berubah menjadi:
+
+```text
+i = 1
+```
+
+Kemudian inner loop kembali dimulai dari:
+
+```text
+j = 0
+```
+
+dan proses tersebut terus berulang.
+
+Secara visual:
+
+```text
+i = 0
+│
+├── j = 0
+└── j = 1
+
+i = 1
+│
+├── j = 0
+└── j = 1
+
+i = 2
+│
+├── j = 0
+└── j = 1
+```
+
+---
+
+### Contoh Nested Loop
+
+Nested loop sering digunakan ketika sebuah masalah mempunyai struktur
+**baris dan kolom**.
+
+Misalnya kita ingin mencetak:
+
+```text
+***
+***
+***
+```
+
+Kita dapat menggunakan:
+
+```c
+#include <stdio.h>
+
+int main() {
+    for (int baris = 0; baris < 3; baris++) {
+        for (int kolom = 0; kolom < 3; kolom++) {
+            printf("*");
+        }
+
+        printf("\n");
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+***
+***
+***
+```
+
+Pada program tersebut:
+
+```text
+Outer Loop → menentukan jumlah baris
+Inner Loop → menentukan jumlah bintang pada setiap baris
+```
+
+Outer loop:
+
+```c
+for (int baris = 0; baris < 3; baris++)
+```
+
+berjalan sebanyak:
+
+```text
+3 kali
+```
+
+Sedangkan inner loop:
+
+```c
+for (int kolom = 0; kolom < 3; kolom++)
+```
+
+mencetak:
+
+```text
+***
+```
+
+untuk setiap baris.
+
+Setelah inner loop selesai, kita menjalankan:
+
+```c
+printf("\n");
+```
+
+untuk berpindah ke baris berikutnya.
+
+:::tip
+Ketika ingin membuat pola yang terdiri dari **baris dan kolom**,
+coba pikirkan:
+
+```text
+Outer Loop → Baris
+Inner Loop → Isi setiap baris
+```
+
+Konsep ini akan digunakan kembali pada bagian Practice.
+:::
+
+---
+
+## Common Errors pada Loop
+
+Loop memang dapat membuat program menjadi lebih singkat, tetapi
+kesalahan kecil pada condition atau perubahan variabel dapat membuat
+program menghasilkan perilaku yang tidak diinginkan.
+
+Dua kesalahan yang umum terjadi adalah:
+
+```text
+Infinite Loop
+Off-by-One Error
+```
+
+---
+
+### Infinite Loop
+
+**Infinite Loop** adalah kondisi ketika sebuah loop terus berjalan
+tanpa pernah berhenti.
+
+Salah satu penyebabnya adalah lupa mengubah nilai variabel yang
+digunakan pada condition.
+
+Contoh:
+
+```c
+#include <stdio.h>
+
+int main() {
+    int i = 0;
+
+    while (i < 5) {
+        printf("%d\n", i);
+    }
+
+    return 0;
+}
+```
+
+Perhatikan bahwa di dalam loop tidak terdapat:
+
+```c
+i++;
+```
+
+Akibatnya:
+
+```text
+i = 0
+```
+
+tidak pernah berubah.
+
+Condition:
+
+```c
+i < 5
+```
+
+selalu menjadi:
+
+```text
+0 < 5 → True
+```
+
+Sehingga program terus menghasilkan:
+
+```text
+0
+0
+0
+0
+0
+0
+...
+```
+
+dan tidak pernah berhenti dengan sendirinya.
+
+Versi yang benar:
+
+```c
+int i = 0;
+
+while (i < 5) {
+    printf("%d\n", i);
+    i++;
+}
+```
+
+Sekarang nilai `i` berubah:
+
+```text
+0 → 1 → 2 → 3 → 4 → 5
+```
+
+dan ketika:
+
+```text
+i = 5
+```
+
+condition menjadi:
+
+```text
+5 < 5 → False
+```
+
+sehingga loop berhenti.
+
+:::warning
+Jika program tiba-tiba terus mencetak output tanpa berhenti,
+periksa terlebih dahulu:
+
+- Condition loop.
+- Perubahan variabel loop.
+- Apakah condition memiliki kemungkinan untuk menjadi `false`.
+  :::
+
+---
+
+### Off-by-One Error
+
+**Off-by-One Error** terjadi ketika batas sebuah loop tidak sesuai
+dengan jumlah iterasi yang kita inginkan.
+
+Misalnya kita ingin mencetak:
+
+```text
+Hello
+```
+
+sebanyak `5` kali.
+
+Kita menulis:
+
+```c
+for (int i = 0; i <= 5; i++) {
+    printf("Hello\n");
+}
+```
+
+Sekilas mungkin terlihat benar.
+
+Namun coba perhatikan nilai `i`:
+
+```text
+i = 0
+i = 1
+i = 2
+i = 3
+i = 4
+i = 5
+```
+
+Jumlahnya adalah:
+
+```text
+6 iterasi
+```
+
+Karena nilai `0` juga ikut dihitung.
+
+Akibatnya `"Hello"` dicetak sebanyak:
+
+```text
+6 kali
+```
+
+Jika kita ingin tepat `5` iterasi dengan nilai awal `0`, condition yang
+sesuai adalah:
+
+```c
+i < 5
+```
+
+Sehingga:
+
+```c
+for (int i = 0; i < 5; i++) {
+    printf("Hello\n");
+}
+```
+
+nilai `i` hanya:
+
+```text
+0
+1
+2
+3
+4
+```
+
+yaitu tepat:
+
+```text
+5 iterasi
+```
+
+---
+
+### `<` dan `<=`
+
+Salah satu sumber off-by-one error yang paling umum adalah tertukar
+antara:
+
+```text
+<
+```
+
+dan:
+
+```text
+<=
+```
+
+Bandingkan:
+
+```c
+for (int i = 0; i < 5; i++)
+```
+
+Nilai `i`:
+
+```text
+0 1 2 3 4
+```
+
+Jumlah iterasi:
+
+```text
+5
+```
+
+Sedangkan:
+
+```c
+for (int i = 0; i <= 5; i++)
+```
+
+Nilai `i`:
+
+```text
+0 1 2 3 4 5
+```
+
+Jumlah iterasi:
+
+```text
+6
+```
+
+Tidak ada yang selalu salah antara `<` dan `<=`.
+
+Yang penting adalah batas loop harus sesuai dengan hasil yang ingin
+kita capai.
+
+:::tip
+Ketika ragu dengan jumlah iterasi sebuah loop, tuliskan beberapa nilai
+awal variabel loop secara manual.
+
+Contoh:
+
+```text
+i = 0
+i = 1
+i = 2
+...
+```
+
+Cara sederhana ini sering membantu menemukan off-by-one error.
+:::
+
+---
+
+## Practice
+
+Sekarang kalian telah mempelajari:
+
+```text
+for
+while
+do-while
+break
+continue
+nested loop
+```
+
+Pada bagian ini, kita akan mencoba menggunakan konsep-konsep tersebut
+untuk menyelesaikan beberapa permasalahan sederhana.
+
+:::info
+Cobalah memahami pola yang diminta terlebih dahulu sebelum mulai
+menulis kode.
+
+Untuk soal pola bintang, perhatikan hubungan antara:
+
+```text
+baris
+dan
+jumlah bintang pada setiap baris
+```
+
+:::
+
+---
+
+### Practice 1 — Persegi Bintang
+
+Buatlah program yang menerima sebuah bilangan bulat `n`.
+
+Nilai `n` menentukan jumlah baris sekaligus jumlah bintang pada setiap
+baris.
+
+Jika input yang diberikan adalah:
+
+```text
+5
+```
+
+maka output yang dihasilkan:
+
+```text
+*****
+*****
+*****
+*****
+*****
+```
+
+Contoh tampilan program:
+
+```text
+Enter how many line of stars : 5
+
+*****
+*****
+*****
+*****
+*****
+```
+
+#### Petunjuk
+
+Perhatikan bahwa:
+
+```text
+Jumlah baris             = 5
+Jumlah bintang per baris = 5
+```
+
+Permasalahan ini dapat dipandang sebagai:
+
+```text
+Outer Loop
+→ mengatur jumlah baris
+
+Inner Loop
+→ mencetak bintang pada setiap baris
+```
+
+Secara sederhana:
+
+```text
+Baris 1 → *****
+Baris 2 → *****
+Baris 3 → *****
+Baris 4 → *****
+Baris 5 → *****
+```
+
+---
+
+### Practice 2 — Segitiga Bintang Naik
+
+Buatlah program yang menerima sebuah bilangan bulat `n`.
+
+Program kemudian mencetak pola bintang yang jumlahnya bertambah pada
+setiap baris.
+
+Jika input:
+
+```text
+5
+```
+
+maka output:
+
+```text
+*
+**
+***
+****
+*****
+```
+
+Contoh tampilan program:
+
+```text
+Enter how many line of stars : 5
+
+*
+**
+***
+****
+*****
+```
+
+#### Petunjuk
+
+Perhatikan hubungan antara nomor baris dengan jumlah bintang:
+
+```text
+Baris 1 → 1 bintang
+Baris 2 → 2 bintang
+Baris 3 → 3 bintang
+Baris 4 → 4 bintang
+Baris 5 → 5 bintang
+```
+
+Sehingga jumlah iterasi pada inner loop **tidak selalu sama**.
+
+Jumlah bintang mengikuti nomor baris.
+
+Secara konsep:
+
+```text
+Outer Loop
+→ menentukan baris
+
+Inner Loop
+→ mencetak bintang sebanyak nomor baris
+```
+
+---
+
+### Practice 3 — Segitiga Bintang Turun
+
+Buatlah program yang menerima sebuah bilangan bulat `n`.
+
+Program kemudian mencetak pola bintang yang jumlahnya berkurang pada
+setiap baris.
+
+Jika input:
+
+```text
+5
+```
+
+maka output:
+
+```text
+*****
+****
+***
+**
+*
+```
+
+Contoh tampilan program:
+
+```text
+Enter how many line of stars : 5
+
+*****
+****
+***
+**
+*
+```
+
+#### Petunjuk
+
+Perhatikan polanya:
+
+```text
+Baris 1 → 5 bintang
+Baris 2 → 4 bintang
+Baris 3 → 3 bintang
+Baris 4 → 2 bintang
+Baris 5 → 1 bintang
+```
+
+Berbeda dengan Practice 2, jumlah bintang pada soal ini justru
+**berkurang** pada setiap baris.
+
+Kalian dapat memikirkan hubungan:
+
+```text
+Jumlah bintang
+=
+jumlah baris - posisi baris
+```
+
+atau menggunakan loop yang berjalan menurun.
+
+---
+
+### Practice 4 — Faktorial
+
+Buatlah sebuah program untuk menghitung **faktorial** dari sebuah
+bilangan.
+
+Faktorial sebuah bilangan positif `n` merupakan hasil perkalian:
+
+```text
+n × (n - 1) × (n - 2) × ... × 1
+```
+
+Sebagai contoh:
+
+```text
+5!
+```
+
+berarti:
+
+```text
+5 × 4 × 3 × 2 × 1
+```
+
+dan menghasilkan:
+
+```text
+120
+```
+
+Jika input:
+
+```text
+5
+```
+
+maka contoh output:
+
+```text
+Enter number: 5
+Factorial from 5 = 120
+```
+
+#### Petunjuk
+
+Untuk menghitung faktorial, kita membutuhkan sebuah variabel untuk
+menyimpan hasil perkalian sementara.
+
+Misalnya:
+
+```text
+hasil = 1
+```
+
+Kemudian nilai tersebut terus dikalikan selama loop berjalan:
+
+```text
+hasil = hasil × 1
+hasil = hasil × 2
+hasil = hasil × 3
+hasil = hasil × 4
+hasil = hasil × 5
+```
+
+Perubahannya:
+
+```text
+Awal        : hasil = 1
+
+× 1         : hasil = 1
+× 2         : hasil = 2
+× 3         : hasil = 6
+× 4         : hasil = 24
+× 5         : hasil = 120
+```
+
+Sehingga:
+
+```text
+5! = 120
+```
+
+:::tip
+Pada soal faktorial, pikirkan dua hal:
+
+1. Variabel apa yang digunakan untuk menyimpan hasil?
+2. Berapa kali proses perkalian harus dilakukan?
+   :::
+
+---
+
+## Ringkasan
+
+Pada materi ini kita telah mempelajari bagaimana sebuah blok program
+dapat dijalankan berulang kali menggunakan **loop**.
+
+Tiga jenis loop utama pada bahasa C adalah:
+
+```text
+for
+while
+do-while
+```
+
+Kita juga telah mempelajari:
+
+```text
+break
+continue
+nested loop
+```
+
+serta beberapa kesalahan yang sering terjadi:
+
+```text
+infinite loop
+off-by-one error
+```
+
+Secara umum:
+
+```text
+for
+→ cocok ketika jumlah iterasi sudah diketahui
+
+while
+→ cocok ketika perulangan bergantung pada kondisi
+
+do-while
+→ cocok ketika kode harus dijalankan minimal satu kali
+```
+
+Pemahaman mengenai loop akan sangat membantu ketika program mulai
+membutuhkan proses yang dilakukan berulang kali tanpa harus menulis
+kode yang sama secara terus-menerus.

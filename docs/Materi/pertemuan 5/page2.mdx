@@ -1,0 +1,1017 @@
+---
+title: Array dan Multidimensional Array
+sidebar_position: 2
+toc_min_heading_level: 2
+toc_max_heading_level: 6
+---
+
+# Array dan Multidimensional Array
+
+Pada materi sebelumnya, kita telah mempelajari penggunaan variabel untuk menyimpan sebuah nilai. Namun, bagaimana jika program perlu menyimpan banyak nilai yang memiliki tipe data sama?
+
+Misalnya, sebuah program perlu menyimpan suhu selama tujuh hari. Kita dapat membuat tujuh variabel berbeda, tetapi cara tersebut akan menyulitkan ketika jumlah data semakin banyak. Untuk mengatasi hal tersebut, bahasa C menyediakan **Array**.
+
+Array memungkinkan beberapa nilai disimpan menggunakan satu nama variabel dan diakses melalui indeks. Pada materi ini, kita akan mempelajari array satu dimensi, cara mengakses dan menelusuri elemen, array multidimensi, penggunaan nested loop, serta operator `sizeof`.
+
+---
+
+## Apa itu Array?
+
+**Array** adalah kumpulan elemen yang memiliki tipe data sama dan disimpan secara berurutan di memori. Setiap nilai di dalam array disebut **elemen** (*element*), sedangkan nomor posisi elemen disebut **indeks** (*index*).
+
+Sebagai contoh, perhatikan data suhu berikut:
+
+```text
+28, 30, 29, 31, 27
+```
+
+Kita dapat menyimpan data tersebut ke dalam satu array bernama `suhu`:
+
+```c
+int suhu[5] = {28, 30, 29, 31, 27};
+```
+
+Array `suhu` memiliki lima elemen bertipe `int`. Setiap elemen mempunyai indeks yang digunakan untuk mengakses nilainya.
+
+| Indeks | Elemen | Nilai |
+|:---:|:---|---:|
+| 0 | `suhu[0]` | 28 |
+| 1 | `suhu[1]` | 30 |
+| 2 | `suhu[2]` | 29 |
+| 3 | `suhu[3]` | 31 |
+| 4 | `suhu[4]` | 27 |
+
+Perhatikan bahwa indeks array pada bahasa C **dimulai dari `0`, bukan `1`**. Oleh karena itu, array dengan lima elemen memiliki indeks dari `0` hingga `4`.
+
+### Mengapa Array Dibutuhkan?
+
+Tanpa array, sekumpulan data dapat disimpan menggunakan variabel terpisah:
+
+```c
+int suhu1 = 28;
+int suhu2 = 30;
+int suhu3 = 29;
+int suhu4 = 31;
+int suhu5 = 27;
+```
+
+Cara tersebut masih dapat digunakan untuk jumlah data yang sedikit. Namun, jika jumlah data mencapai ratusan atau ribuan, deklarasi dan pemrosesan setiap variabel secara terpisah akan menjadi tidak praktis.
+
+Dengan array, data dapat dikelola melalui satu nama variabel:
+
+```c
+int suhu[5] = {28, 30, 29, 31, 27};
+```
+
+Array membantu program menjadi:
+
+- Lebih ringkas karena sekumpulan nilai disimpan menggunakan satu nama.
+- Lebih mudah diproses dengan perulangan.
+- Lebih mudah dikelola ketika jumlah elemen cukup banyak.
+- Lebih terstruktur ketika data memiliki tipe yang sama.
+
+:::tip
+Gunakan array ketika program perlu menyimpan sekumpulan data dengan tipe yang sama, misalnya kumpulan nilai, jumlah barang, suhu, atau data pada tabel.
+:::
+
+---
+
+## Deklarasi Array
+
+Deklarasi array merupakan proses menentukan tipe data, nama, dan jumlah elemen yang akan disediakan.
+
+Sintaks dasar deklarasi array dalam bahasa C adalah:
+
+```c
+tipe_data nama_array[ukuran];
+```
+
+Keterangan:
+
+| Bagian | Penjelasan |
+|:---|:---|
+| `tipe_data` | Jenis data yang disimpan, misalnya `int`, `float`, atau `char`. |
+| `nama_array` | Nama yang digunakan untuk mengakses array. |
+| `ukuran` | Jumlah elemen yang disediakan pada array. |
+
+Contoh deklarasi:
+
+```c
+int angka[5];
+float berat[4];
+char kode[10];
+```
+
+Penjelasan:
+
+- `int angka[5]` menyediakan lima elemen bertipe integer.
+- `float berat[4]` menyediakan empat elemen bertipe pecahan.
+- `char kode[10]` menyediakan sepuluh elemen bertipe karakter.
+
+Ketika array dideklarasikan sebagai variabel lokal tanpa inisialisasi, elemen-elemennya belum memiliki nilai awal yang dapat diandalkan. Berikan nilai terlebih dahulu sebelum membaca elemen tersebut.
+
+### Menentukan Ukuran Array
+
+Ukuran array biasa ditentukan saat deklarasi. Misalnya:
+
+```c
+int nilai[6];
+```
+
+Artinya, array dapat menyimpan enam elemen. Indeks validnya adalah:
+
+```text
+0, 1, 2, 3, 4, 5
+```
+
+Indeks terakhir selalu sama dengan ukuran array dikurangi satu.
+
+:::warning
+Jangan mengakses indeks di luar rentang array. Jika `nilai` berukuran enam, maka `nilai[6]` bukan elemen yang valid. Akses di luar batas array menyebabkan *undefined behavior*.
+:::
+
+---
+
+## Inisialisasi Array
+
+**Inisialisasi** adalah proses memberikan nilai awal pada elemen array. Inisialisasi dapat dilakukan ketika array dideklarasikan atau dengan memberikan nilai setelah deklarasi.
+
+### Inisialisasi saat Deklarasi
+
+Nilai awal dapat dituliskan di dalam kurung kurawal `{}` dan dipisahkan dengan koma.
+
+```c
+int stok[4] = {12, 18, 9, 21};
+```
+
+Nilai akan ditempatkan secara berurutan:
+
+```text
+stok[0] = 12
+stok[1] = 18
+stok[2] = 9
+stok[3] = 21
+```
+
+Kita juga dapat tidak menuliskan ukuran array jika nilai awal sudah disediakan:
+
+```c
+int stok[] = {12, 18, 9, 21};
+```
+
+Compiler akan menentukan ukuran array berdasarkan jumlah nilai yang diberikan, yaitu empat elemen.
+
+Jika jumlah nilai awal lebih sedikit daripada ukuran yang ditentukan, elemen sisanya akan diinisialisasi menjadi nol:
+
+```c
+int stok[5] = {12, 18};
+```
+
+Dalam contoh ini, nilai array menjadi `12, 18, 0, 0, 0`.
+
+### Mengisi Elemen Setelah Deklarasi
+
+Array juga dapat diisi dengan menetapkan nilai pada masing-masing indeks.
+
+```c
+int stok[3];
+
+stok[0] = 15;
+stok[1] = 22;
+stok[2] = 11;
+```
+
+Setelah perintah tersebut dijalankan, ketiga elemen array telah memiliki nilai.
+
+### Contoh Program Inisialisasi
+
+Buat program berikut:
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int stok[4] = {12, 18, 9, 21};
+
+    printf("Stok pada rak pertama: %d\n", stok[0]);
+    printf("Stok pada rak kedua: %d\n", stok[1]);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Stok pada rak pertama: 12
+Stok pada rak kedua: 18
+```
+
+Pada contoh tersebut, array `stok` diinisialisasi dengan empat nilai. Kemudian, dua elemen pertama diakses menggunakan indeks `0` dan `1`.
+
+---
+
+## Mengakses Elemen Array
+
+Untuk mengambil nilai dari array, kita dapat menggunakan nama array diikuti indeks di dalam tanda kurung siku.
+
+Sintaks:
+
+```c
+nama_array[indeks];
+```
+
+Contoh:
+
+```c
+int durasi[4] = {35, 42, 28, 50};
+
+printf("%d", durasi[2]);
+```
+
+**Output di terminal:**
+
+```text
+28
+```
+
+`durasi[2]` mengambil elemen dengan indeks `2`, yaitu elemen ketiga yang memiliki nilai `28`.
+
+### Mengubah Nilai Elemen
+
+Elemen array dapat diperbarui dengan menggunakan operator penugasan (`=`).
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int durasi[4] = {35, 42, 28, 50};
+
+    printf("Sebelum diubah: %d\n", durasi[1]);
+
+    durasi[1] = 45;
+
+    printf("Setelah diubah: %d\n", durasi[1]);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Sebelum diubah: 42
+Setelah diubah: 45
+```
+
+Pada awalnya, `durasi[1]` memiliki nilai `42`. Setelah perintah `durasi[1] = 45`, nilai elemen tersebut berubah menjadi `45`. Elemen lainnya tidak ikut berubah.
+
+### Mengakses Elemen Menggunakan Input
+
+Indeks juga dapat berasal dari variabel, misalnya nilai yang dimasukkan oleh pengguna.
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int skor[5] = {70, 85, 90, 75, 88};
+    int indeks;
+
+    printf("Masukkan indeks (0-4): ");
+    scanf("%d", &indeks);
+
+    if (indeks >= 0 && indeks < 5) {
+        printf("Nilai pada indeks %d adalah %d\n",
+               indeks, skor[indeks]);
+    } else {
+        printf("Indeks tidak valid.\n");
+    }
+
+    return 0;
+}
+```
+
+Contoh output ketika pengguna memasukkan `2`:
+
+```text
+Masukkan indeks (0-4): 2
+Nilai pada indeks 2 adalah 90
+```
+
+Pemeriksaan `indeks >= 0 && indeks < 5` memastikan program hanya mengakses indeks yang valid.
+
+---
+
+## Menelusuri Array dengan Loop
+
+Jika semua elemen array ingin ditampilkan atau diproses, kita dapat menggunakan perulangan (*loop*). Penggunaan loop menghindari penulisan perintah yang sama berulang kali.
+
+Misalnya, untuk menampilkan semua elemen:
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int durasi[5] = {35, 42, 28, 50, 39};
+
+    for (int i = 0; i < 5; i++) {
+        printf("%d ", durasi[i]);
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+35 42 28 50 39
+```
+
+### Memahami Perulangan
+
+Perhatikan bagian berikut:
+
+```c
+for (int i = 0; i < 5; i++) {
+    printf("%d ", durasi[i]);
+}
+```
+
+Bagian-bagiannya:
+
+- `int i = 0` merupakan inisialisasi indeks yang dimulai dari elemen pertama.
+- `i < 5` merupakan kondisi agar loop berjalan selama indeks kurang dari lima.
+- `i++` menaikkan nilai indeks satu demi satu.
+- `durasi[i]` mengambil elemen array berdasarkan indeks saat ini.
+
+Urutan indeks yang diproses:
+
+| Iterasi | Nilai `i` | Elemen yang diakses | Nilai |
+|---:|---:|:---|---:|
+| 1 | 0 | `durasi[0]` | 35 |
+| 2 | 1 | `durasi[1]` | 42 |
+| 3 | 2 | `durasi[2]` | 28 |
+| 4 | 3 | `durasi[3]` | 50 |
+| 5 | 4 | `durasi[4]` | 39 |
+
+Setelah `i` menjadi `5`, kondisi `i < 5` bernilai salah sehingga loop berhenti.
+
+### Menghitung Jumlah Elemen Array
+
+Loop tidak hanya digunakan untuk menampilkan data, tetapi juga untuk melakukan perhitungan.
+
+Contoh menghitung total durasi:
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int durasi[5] = {35, 42, 28, 50, 39};
+    int total = 0;
+
+    for (int i = 0; i < 5; i++) {
+        total += durasi[i];
+    }
+
+    printf("Total durasi: %d menit\n", total);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Total durasi: 194 menit
+```
+
+Variabel `total` dimulai dari `0`. Pada setiap iterasi, nilai elemen array ditambahkan ke `total` menggunakan operator `+=`.
+
+---
+
+## Multidimensional Array
+
+Array yang telah dibahas sebelumnya hanya menggunakan satu indeks dan disebut **array satu dimensi**. Bahasa C juga mendukung array yang memiliki lebih dari satu indeks, yang disebut **multidimensional array** atau array multidimensi.
+
+Array multidimensi dapat digunakan untuk merepresentasikan data yang memiliki beberapa dimensi, misalnya data berbentuk tabel, matriks, jadwal, atau nilai beberapa peserta dalam beberapa mata pelajaran.
+
+Pada materi ini, kita akan berfokus pada **array dua dimensi (2D)**, yaitu array yang menggunakan baris dan kolom.
+
+### Apa itu Array Dua Dimensi?
+
+Array dua dimensi dapat dibayangkan sebagai tabel yang terdiri atas baris dan kolom.
+
+Sebagai contoh, data penggunaan ruang pada tiga lantai dan empat periode dapat disimpan dalam array 2D:
+
+```text
+             Periode
+          0   1   2   3
+        ┌───┬───┬───┬───┐
+Lantai 0│ 3 │ 2 │ 4 │ 1 │
+        ├───┼───┼───┼───┤
+Lantai 1│ 5 │ 3 │ 2 │ 4 │
+        ├───┼───┼───┼───┤
+Lantai 2│ 2 │ 4 │ 3 │ 5 │
+        └───┴───┴───┴───┘
+```
+
+Setiap nilai memiliki dua indeks, yaitu indeks baris dan indeks kolom.
+
+Contohnya, `ruang[1][2]` menunjukkan baris kedua dan kolom ketiga.
+
+### Deklarasi Array Dua Dimensi
+
+Sintaks umum deklarasi array dua dimensi adalah:
+
+```c
+tipe_data nama_array[jumlah_baris][jumlah_kolom];
+```
+
+Contoh:
+
+```c
+int ruang[3][4];
+```
+
+Keterangan:
+
+- `int` merupakan tipe data untuk seluruh elemen.
+- `ruang` merupakan nama array.
+- `3` menunjukkan jumlah baris.
+- `4` menunjukkan jumlah kolom.
+
+Dengan demikian, array tersebut memiliki total 12 elemen (`3 × 4`). Indeks baris yang valid adalah `0` sampai `2`, sedangkan indeks kolom yang valid adalah `0` sampai `3`.
+
+### Inisialisasi Array Dua Dimensi
+
+Nilai array 2D dapat diberikan saat deklarasi menggunakan kurung kurawal bertingkat.
+
+```c
+int ruang[3][4] = {
+    {3, 2, 4, 1},
+    {5, 3, 2, 4},
+    {2, 4, 3, 5}
+};
+```
+
+Setiap kelompok nilai di dalam kurung kurawal bagian dalam mewakili satu baris.
+
+Representasi indeksnya:
+
+| Baris / Kolom | Kolom 0 | Kolom 1 | Kolom 2 | Kolom 3 |
+|:---:|---:|---:|---:|---:|
+| Baris 0 | 3 | 2 | 4 | 1 |
+| Baris 1 | 5 | 3 | 2 | 4 |
+| Baris 2 | 2 | 4 | 3 | 5 |
+
+Kita juga dapat menuliskan inisialisasi tanpa kurung kurawal per baris:
+
+```c
+int ruang[3][4] = {3, 2, 4, 1, 5, 3, 2, 4, 2, 4, 3, 5};
+```
+
+Nilai akan ditempatkan secara berurutan sesuai urutan penyimpanan array C, yaitu dari baris pertama ke baris berikutnya. Namun, penggunaan kurung kurawal per baris umumnya lebih mudah dibaca.
+
+### Mengakses Elemen Array Dua Dimensi
+
+Untuk mengakses elemen array 2D, gunakan dua indeks:
+
+```c
+nama_array[indeks_baris][indeks_kolom];
+```
+
+Contoh:
+
+```c
+int ruang[3][4] = {
+    {3, 2, 4, 1},
+    {5, 3, 2, 4},
+    {2, 4, 3, 5}
+};
+
+printf("%d\n", ruang[1][2]);
+```
+
+**Output di terminal:**
+
+```text
+2
+```
+
+`ruang[1][2]` berarti baris dengan indeks `1` (baris kedua) dan kolom dengan indeks `2` (kolom ketiga). Nilai pada posisi tersebut adalah `2`.
+
+Elemen array 2D juga dapat diubah:
+
+```c
+ruang[1][2] = 8;
+```
+
+Setelah perintah ini, nilai pada baris kedua kolom ketiga berubah menjadi `8`.
+
+:::tip
+Ingat urutan indeks array 2D: indeks pertama menunjukkan **baris**, sedangkan indeks kedua menunjukkan **kolom**.
+:::
+
+---
+
+## Menelusuri Array 2D dengan Nested Loop
+
+Untuk memproses semua elemen array 2D, kita dapat menggunakan **nested loop**, yaitu perulangan yang berada di dalam perulangan lainnya.
+
+Pada array 2D:
+
+- Loop luar digunakan untuk menelusuri baris.
+- Loop dalam digunakan untuk menelusuri kolom pada baris yang sedang diproses.
+
+Contoh program:
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int ruang[3][4] = {
+        {3, 2, 4, 1},
+        {5, 3, 2, 4},
+        {2, 4, 3, 5}
+    };
+
+    for (int baris = 0; baris < 3; baris++) {
+        for (int kolom = 0; kolom < 4; kolom++) {
+            printf("%d ", ruang[baris][kolom]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+3 2 4 1
+5 3 2 4
+2 4 3 5
+```
+
+### Memahami Nested Loop
+
+Perhatikan struktur berikut:
+
+```c
+for (int baris = 0; baris < 3; baris++) {
+    for (int kolom = 0; kolom < 4; kolom++) {
+        printf("%d ", ruang[baris][kolom]);
+    }
+    printf("\n");
+}
+```
+
+Loop luar:
+
+```c
+for (int baris = 0; baris < 3; baris++)
+```
+
+Loop luar mengatur baris yang sedang diproses. Karena terdapat tiga baris, variabel `baris` akan bernilai `0`, `1`, dan `2`.
+
+Loop dalam:
+
+```c
+for (int kolom = 0; kolom < 4; kolom++)
+```
+
+Loop dalam mengakses empat kolom pada setiap baris. Setiap kali loop luar memilih satu baris, loop dalam akan berjalan sampai seluruh kolom pada baris tersebut selesai diproses.
+
+Perintah:
+
+```c
+printf("\n");
+```
+
+berada di luar loop dalam, tetapi masih di dalam loop luar. Artinya, baris baru dicetak setelah semua kolom pada satu baris selesai ditampilkan.
+
+### Urutan Akses Elemen
+
+Urutan elemen yang diakses oleh nested loop tersebut adalah:
+
+```text
+ruang[0][0]
+ruang[0][1]
+ruang[0][2]
+ruang[0][3]
+
+ruang[1][0]
+ruang[1][1]
+ruang[1][2]
+ruang[1][3]
+
+ruang[2][0]
+ruang[2][1]
+ruang[2][2]
+ruang[2][3]
+```
+
+Dengan cara ini, seluruh elemen dapat diproses tanpa menuliskan akses untuk setiap sel secara manual.
+
+---
+
+## Array Size dengan `sizeof`
+
+Operator `sizeof` digunakan untuk memperoleh ukuran suatu tipe data atau objek dalam satuan **byte**.
+
+Contoh:
+
+```c
+int konsumsi[] = {120, 135, 128, 142, 130};
+
+printf("%zu\n", sizeof(konsumsi));
+```
+
+`sizeof(konsumsi)` memberikan ukuran keseluruhan array dalam byte. Nilai pastinya bergantung pada ukuran tipe `int` pada sistem yang digunakan.
+
+### Menghitung Jumlah Elemen Array
+
+Untuk mengetahui jumlah elemen array, ukuran seluruh array dapat dibagi dengan ukuran satu elemennya.
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int konsumsi[] = {120, 135, 128, 142, 130};
+
+    size_t jumlah = sizeof(konsumsi) / sizeof(konsumsi[0]);
+
+    printf("Jumlah elemen: %zu\n", jumlah);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Jumlah elemen: 5
+```
+
+Penjelasan:
+
+- `sizeof(konsumsi)` menghasilkan ukuran total array dalam byte.
+- `sizeof(konsumsi[0])` menghasilkan ukuran elemen pertama dalam byte.
+- Pembagian ukuran total dengan ukuran satu elemen menghasilkan jumlah elemen array.
+- `size_t` merupakan tipe data yang sesuai untuk menyimpan ukuran objek.
+- `%zu` merupakan format untuk menampilkan nilai `size_t`.
+
+### Menggunakan `sizeof` pada Perulangan
+
+Jumlah elemen yang dihitung dapat digunakan sebagai batas perulangan, sehingga kita tidak perlu menuliskan ukuran array secara manual.
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int konsumsi[] = {120, 135, 128, 142, 130};
+
+    size_t jumlah = sizeof(konsumsi) / sizeof(konsumsi[0]);
+
+    for (size_t i = 0; i < jumlah; i++) {
+        printf("Data ke-%zu: %d\n", i + 1, konsumsi[i]);
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Data ke-1: 120
+Data ke-2: 135
+Data ke-3: 128
+Data ke-4: 142
+Data ke-5: 130
+```
+
+### Menghitung Jumlah Baris dan Kolom Array 2D
+
+Operator `sizeof` juga dapat digunakan untuk mengetahui jumlah baris dan kolom dari array 2D yang masih berupa array.
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int ruang[3][4] = {
+        {3, 2, 4, 1},
+        {5, 3, 2, 4},
+        {2, 4, 3, 5}
+    };
+
+    size_t jumlah_baris = sizeof(ruang) / sizeof(ruang[0]);
+    size_t jumlah_kolom = sizeof(ruang[0]) / sizeof(ruang[0][0]);
+
+    printf("Jumlah baris: %zu\n", jumlah_baris);
+    printf("Jumlah kolom: %zu\n", jumlah_kolom);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Jumlah baris: 3
+Jumlah kolom: 4
+```
+
+Perhitungan pertama membagi ukuran seluruh array dengan ukuran satu baris. Perhitungan kedua membagi ukuran satu baris dengan ukuran satu elemen.
+
+:::warning
+Rumus `sizeof(array) / sizeof(array[0])` digunakan ketika variabel tersebut benar-benar berupa array pada lingkup yang sama. Jika array diteruskan sebagai parameter fungsi, array akan menyesuaikan menjadi pointer. Oleh karena itu, `sizeof` pada parameter tersebut tidak menghasilkan ukuran seluruh array. Kirimkan jumlah elemen sebagai parameter terpisah jika diperlukan.
+:::
+
+---
+
+## Contoh Penerapan Array
+
+Setelah memahami deklarasi, inisialisasi, akses elemen, loop, dan array 2D, kita dapat menggabungkan konsep-konsep tersebut untuk menyelesaikan permasalahan sederhana.
+
+### Menghitung Total dan Rata-rata Data
+
+Misalnya, sebuah program menyimpan durasi belajar selama lima sesi dan menghitung total serta rata-ratanya.
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int durasi[5] = {35, 42, 28, 50, 39};
+    int total = 0;
+    int jumlah = sizeof(durasi) / sizeof(durasi[0]);
+
+    for (int i = 0; i < jumlah; i++) {
+        total += durasi[i];
+    }
+
+    float rata_rata = (float) total / jumlah;
+
+    printf("Total durasi: %d menit\n", total);
+    printf("Rata-rata: %.2f menit\n", rata_rata);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Total durasi: 194 menit
+Rata-rata: 38.80 menit
+```
+
+`(float) total` mengubah nilai `total` menjadi tipe pecahan sebelum pembagian, sehingga hasil rata-rata tidak dibatasi pada pembagian bilangan bulat.
+
+### Menentukan Nilai Maksimum dan Minimum
+
+Array dapat diproses untuk mencari nilai terbesar dan terkecil tanpa harus mengurutkan seluruh elemen.
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int pengunjung[] = {45, 62, 38, 71, 54, 49};
+    size_t jumlah = sizeof(pengunjung) / sizeof(pengunjung[0]);
+
+    int maksimum = pengunjung[0];
+    int minimum = pengunjung[0];
+
+    for (size_t i = 1; i < jumlah; i++) {
+        if (pengunjung[i] > maksimum) {
+            maksimum = pengunjung[i];
+        }
+
+        if (pengunjung[i] < minimum) {
+            minimum = pengunjung[i];
+        }
+    }
+
+    printf("Pengunjung terbanyak: %d\n", maksimum);
+    printf("Pengunjung tersedikit: %d\n", minimum);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Pengunjung terbanyak: 71
+Pengunjung tersedikit: 38
+```
+
+Variabel `maksimum` dan `minimum` diawali dari elemen pertama. Loop kemudian membandingkan elemen berikutnya dengan nilai tersebut dan memperbaruinya jika ditemukan nilai yang lebih besar atau lebih kecil.
+
+### Menghitung Jumlah Setiap Baris pada Array 2D
+
+Array dua dimensi dapat digunakan untuk mencatat data dalam beberapa kelompok. Contoh berikut menyimpan penggunaan ruang di tiga lantai selama empat periode dan menghitung total untuk setiap lantai.
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int ruang[3][4] = {
+        {3, 2, 4, 1},
+        {5, 3, 2, 4},
+        {2, 4, 3, 5}
+    };
+
+    for (int lantai = 0; lantai < 3; lantai++) {
+        int total = 0;
+
+        for (int periode = 0; periode < 4; periode++) {
+            total += ruang[lantai][periode];
+        }
+
+        printf("Total lantai %d: %d\n", lantai + 1, total);
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Total lantai 1: 10
+Total lantai 2: 14
+Total lantai 3: 14
+```
+
+Variabel `total` diletakkan di dalam loop luar agar nilainya kembali menjadi `0` pada awal pemrosesan setiap lantai. Loop dalam menjumlahkan seluruh elemen pada baris yang sedang diproses.
+
+---
+
+## Common Errors pada Array
+
+Dalam menggunakan array, terdapat beberapa kesalahan yang perlu diperhatikan.
+
+### 1. Menggunakan Indeks di Luar Batas
+
+Contoh yang salah:
+
+```c
+int nilai[5] = {70, 80, 75, 90, 85};
+
+printf("%d\n", nilai[5]);
+```
+
+Array tersebut hanya memiliki indeks valid `0` sampai `4`. `nilai[5]` berada di luar batas array dan menghasilkan *undefined behavior*.
+
+Perbaikannya adalah menggunakan indeks yang valid:
+
+```c
+printf("%d\n", nilai[4]);
+```
+
+### 2. Batas Loop Tidak Sesuai
+
+Contoh yang salah:
+
+```c
+int nilai[5] = {70, 80, 75, 90, 85};
+
+for (int i = 0; i <= 5; i++) {
+    printf("%d\n", nilai[i]);
+}
+```
+
+Kondisi `i <= 5` membuat loop mencoba mengakses indeks `5`. Untuk array berukuran lima, gunakan:
+
+```c
+for (int i = 0; i < 5; i++) {
+    printf("%d\n", nilai[i]);
+}
+```
+
+### 3. Membaca Elemen yang Belum Diinisialisasi
+
+Contoh yang salah:
+
+```c
+int nilai[3];
+
+printf("%d\n", nilai[0]);
+```
+
+Array lokal tersebut belum diberi nilai. Membaca elemennya sebelum diinisialisasi dapat menghasilkan nilai tak tentu.
+
+Berikan nilai sebelum digunakan:
+
+```c
+int nilai[3] = {0, 0, 0};
+printf("%d\n", nilai[0]);
+```
+
+### 4. Tertukar antara Baris dan Kolom
+
+Untuk array 2D yang dideklarasikan sebagai:
+
+```c
+int tabel[2][3];
+```
+
+indeks pertama memiliki rentang `0`–`1` dan indeks kedua memiliki rentang `0`–`2`. Pastikan urutan akses adalah `tabel[baris][kolom]`.
+
+### 5. Menggunakan `sizeof` pada Parameter Fungsi
+
+Jika array diteruskan sebagai parameter fungsi, parameter tersebut diperlakukan sebagai pointer. Karena itu, ukuran yang dihasilkan `sizeof` pada parameter tidak sama dengan ukuran keseluruhan array asal. Sertakan jumlah elemen sebagai parameter fungsi jika loop membutuhkan batasnya.
+
+---
+
+## Exercises
+
+Kerjakan latihan berikut menggunakan bahasa C. Cobalah menulis program sendiri terlebih dahulu, kemudian kompilasi dan jalankan untuk memeriksa hasilnya. Gunakan contoh data yang berbeda dari contoh materi.
+
+### Exercise 1 — Declaration and Initialization
+
+Deklarasikan sebuah array integer dengan ukuran `n` dan isi dengan nilai dari `1` sampai `n`. Tampilkan seluruh elemen menggunakan loop.
+
+**Petunjuk:**
+- Tentukan ukuran array.
+- Gunakan loop untuk mengisi setiap elemen.
+- Gunakan loop lain untuk menampilkan elemen.
+
+### Exercise 2 — Sum of Array Elements
+
+Buat program yang menyimpan sejumlah bilangan integer dalam array, kemudian menghitung jumlah seluruh elemennya.
+
+**Petunjuk:**
+- Siapkan variabel `total` dengan nilai awal `0`.
+- Telusuri array menggunakan loop.
+- Tambahkan setiap elemen ke variabel `total`.
+- Tampilkan hasil penjumlahan.
+
+### Exercise 3 — Finding Maximum and Minimum
+
+Buat program untuk mencari nilai maksimum dan minimum dari sekumpulan bilangan integer dalam array.
+
+**Petunjuk:**
+- Gunakan elemen pertama sebagai nilai awal maksimum dan minimum.
+- Bandingkan elemen berikutnya menggunakan `if`.
+- Tampilkan nilai maksimum dan minimum.
+
+### Exercise 4 — Declaring Multidimensional Arrays
+
+Deklarasikan array integer 2D berukuran `n x n` dan isi dengan nilai berurutan mulai dari `1`. Tampilkan data dalam bentuk matriks menggunakan nested loop.
+
+**Petunjuk:**
+- Tentukan jumlah baris dan kolom.
+- Gunakan loop bersarang untuk mengisi elemen.
+- Gunakan nested loop untuk menampilkan matriks.
+
+### Exercise 5 — Transpose of a Matrix
+
+Buat program yang menggunakan matriks berukuran `2 x 3`, kemudian menampilkan hasil transpose dengan ukuran `3 x 2`.
+
+Transpose matriks dilakukan dengan menukar posisi baris menjadi kolom dan kolom menjadi baris.
+
+**Petunjuk:**
+- Siapkan matriks awal berukuran dua baris dan tiga kolom.
+- Saat menampilkan transpose, akses elemen dengan urutan indeks yang ditukar.
+- Perhatikan bahwa jumlah baris dan kolom hasil transpose berubah.
+
+### Exercise 6 — Copying Arrays
+
+Buat dua array integer dengan ukuran sama. Salin semua elemen array pertama ke array kedua menggunakan loop, lalu tampilkan keduanya.
+
+**Petunjuk:**
+- Deklarasikan array sumber dan array tujuan.
+- Salin setiap elemen pada indeks yang sama.
+- Tampilkan kedua array untuk memeriksa hasilnya.
+
+### Exercise 7 — Row-wise Sum of a 2D Array
+
+Buat program yang menghitung jumlah elemen pada setiap baris sebuah array 2D.
+
+**Petunjuk:**
+- Gunakan array 2D dengan jumlah baris dan kolom yang ditentukan.
+- Gunakan loop luar untuk baris.
+- Inisialisasi variabel jumlah pada setiap baris.
+- Gunakan loop dalam untuk menjumlahkan seluruh kolom pada baris tersebut.
+
+---
+
+## Ringkasan
+
+Pada materi ini, kita telah mempelajari:
+
+- **Array** merupakan kumpulan elemen bertipe sama yang diakses melalui indeks.
+- **Indeks array C** dimulai dari `0`, sehingga indeks terakhir adalah ukuran array dikurangi satu.
+- **Deklarasi** menentukan tipe data, nama, dan ukuran array.
+- **Inisialisasi** memberikan nilai awal pada elemen array.
+- **Akses elemen** dilakukan menggunakan nama array dan indeks.
+- **Loop** dapat digunakan untuk menelusuri, menampilkan, dan menghitung elemen array.
+- **Array multidimensi** menyimpan data dengan lebih dari satu indeks. Array 2D menggunakan indeks baris dan kolom.
+- **Nested loop** digunakan untuk menelusuri seluruh elemen array 2D.
+- **`sizeof`** menghasilkan ukuran objek dalam byte dan dapat digunakan untuk menghitung jumlah elemen array selama objek masih berupa array.
+
+Array merupakan salah satu struktur dasar dalam pemrograman C. Pemahaman terhadap array akan membantu dalam mempelajari materi berikutnya, seperti string, fungsi yang menerima array, pengurutan data, pencarian data, dan pengolahan matriks.
