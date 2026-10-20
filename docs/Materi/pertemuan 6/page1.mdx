@@ -1,0 +1,1225 @@
+---
+title: Functions dan Procedures
+sidebar_position: 2
+toc_min_heading_level: 2
+toc_max_heading_level: 6
+---
+
+# Functions dan Procedures
+
+Pada materi sebelumnya, kita telah mempelajari **loop** untuk mengulang
+instruksi dan **array** untuk menyimpan banyak data.
+
+Namun, ketika program semakin besar, semua kode yang ditulis di dalam
+`main` akan sulit dibaca. Selain itu, jika kita membutuhkan perhitungan
+yang sama di beberapa tempat, kita harus menulis ulang kodenya:
+
+```c
+int luas1 = 5 * 3;
+int luas2 = 8 * 4;
+int luas3 = 10 * 2;
+```
+
+Untuk mengatasi masalah tersebut, bahasa C menyediakan **Function**.
+
+---
+
+## Apa itu Function?
+
+**Function** (fungsi) adalah sebuah blok kode yang diberi nama dan
+dirancang untuk menjalankan **satu tugas tertentu**.
+
+```c
+int add(int a, int b) {
+    return a + b;
+}
+```
+
+Function `add` menerima dua bilangan bulat, menjumlahkannya, lalu
+mengembalikan hasilnya.
+
+Kita sebenarnya sudah menggunakan function sejak awal: `main` adalah
+function, dan `printf` juga merupakan function.
+
+### Mengapa Function Dibutuhkan?
+
+| Keuntungan | Penjelasan |
+| :--- | :--- |
+| **Modularity** | Program dipecah menjadi bagian-bagian kecil. |
+| **Reusability** | Function dapat dipanggil berkali-kali tanpa menulis ulang kode. |
+| **Maintainability** | Kesalahan lebih mudah dicari dan diperbaiki pada satu function. |
+| **Abstraction** | Kita cukup tahu *apa* yang dilakukan function, tanpa harus tahu *bagaimana* ia bekerja. |
+
+Contoh kode luas persegi panjang sebelumnya jika ditulis dengan function:
+
+```c
+#include <stdio.h>
+
+int luasPersegiPanjang(int panjang, int lebar) {
+    return panjang * lebar;
+}
+
+int main(void) {
+    printf("%d\n", luasPersegiPanjang(5, 3));
+    printf("%d\n", luasPersegiPanjang(8, 4));
+    printf("%d\n", luasPersegiPanjang(10, 2));
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+15
+32
+20
+```
+
+Rumus hanya ditulis **satu kali**. Jika rumus perlu diubah, kita cukup
+mengubahnya di satu tempat.
+
+:::tip
+Jika kalian menemukan potongan kode yang sama ditulis berulang kali, itu
+tanda bahwa kode tersebut layak dijadikan function.
+:::
+
+---
+
+## Mendefinisikan Function
+
+Sintaks dasar:
+
+```c
+return_type function_name(parameters) {
+    // body of the function
+}
+```
+
+Contoh:
+
+```c
+int square(int x) {
+    return x * x;
+}
+```
+
+| Bagian | Penjelasan |
+| :--- | :--- |
+| **Return Type** | Tipe data nilai yang dikembalikan, misalnya `int`, `float`, atau `void`. |
+| **Function Name** | Nama yang digunakan untuk memanggil function. |
+| **Parameters** | Variabel yang menerima nilai dari luar function. |
+| **Body** | Blok kode di dalam `{ }` yang menentukan apa yang dikerjakan function. |
+| **Return Statement** | Perintah `return` yang mengirim nilai kembali ke pemanggil. |
+
+Jika dipetakan pada `square`:
+
+```text
+int square(int x) {
+─┬─ ──┬─── ───┬───
+ │    │       └── Parameter
+ │    └────────── Function Name
+ └─────────────── Return Type
+
+    return x * x;   ← Return Statement
+}                   ← Body berada di dalam { }
+```
+
+---
+
+## Memanggil Function
+
+Function dijalankan dengan **memanggil** namanya diikuti tanda kurung.
+
+```c
+function_name(arguments);
+```
+
+```c
+#include <stdio.h>
+
+int square(int x) {
+    return x * x;
+}
+
+int main(void) {
+    int hasil = square(4);              // disimpan ke variabel
+    printf("Kuadrat dari 4 = %d\n", hasil);
+
+    printf("Kuadrat dari 7 = %d\n", square(7));   // langsung dicetak
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Kuadrat dari 4 = 16
+Kuadrat dari 7 = 49
+```
+
+Alur ketika `square(4)` dipanggil:
+
+```text
+1. main memanggil square(4).
+2. Nilai 4 dikirim ke parameter x.
+3. square menghitung 4 * 4 = 16.
+4. return mengirim 16 kembali ke main.
+5. Nilai 16 disimpan di variabel hasil.
+```
+
+:::info
+Eksekusi program C selalu dimulai dari `main`, meskipun function lain
+ditulis di atasnya.
+:::
+
+### Function Memanggil Function
+
+Sebuah function dapat memanggil function lain. Hasil pemanggilan tersebut
+dapat langsung dipakai sebagai bagian dari ekspresi.
+
+```c
+#include <stdio.h>
+
+int square(int x) {
+    return x * x;
+}
+
+int sumOfSquares(int a, int b) {
+    return square(a) + square(b);
+}
+
+int main(void) {
+    printf("3^2 + 4^2 = %d\n", sumOfSquares(3, 4));
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+3^2 + 4^2 = 25
+```
+
+Perhatikan bahwa `square` ditulis **sebelum** `sumOfSquares`, karena
+`sumOfSquares` memanggilnya.
+
+### Menelusuri Pemanggilan Function
+
+Menelusuri (*tracing*) jalannya program adalah kebiasaan penting untuk
+memahami function. Berikut penelusuran `sumOfSquares(3, 4)`:
+
+```text
+main memanggil sumOfSquares(3, 4)
+│     a = 3, b = 4
+│
+├──── sumOfSquares memanggil square(3)
+│         x = 3 → mengembalikan 9
+│
+├──── sumOfSquares memanggil square(4)
+│         x = 4 → mengembalikan 16
+│
+└──── sumOfSquares mengembalikan 9 + 16 = 25
+
+main mencetak 25
+```
+
+---
+
+## Function Declaration dan Definition
+
+C membaca kode dari atas ke bawah, sehingga function harus sudah
+"dikenal" sebelum dipanggil. Program berikut akan menghasilkan error atau
+peringatan:
+
+```c
+int main(void) {
+    printf("%d\n", add(5, 3));   // add belum dikenal
+    return 0;
+}
+
+int add(int a, int b) {
+    return a + b;
+}
+```
+
+Solusinya adalah menuliskan **declaration** (prototype) di atas `main`.
+
+| Declaration (Prototype) | Definition |
+| :--- | :--- |
+| Menyebutkan nama, return type, dan parameter | Berisi kode lengkap function |
+| Tidak memiliki body | Memiliki body `{ }` |
+| Diakhiri dengan `;` | Tidak diakhiri `;` setelah body |
+
+```c
+#include <stdio.h>
+
+int add(int a, int b);          // declaration (prototype)
+
+int main(void) {
+    printf("%d\n", add(5, 3));
+    return 0;
+}
+
+int add(int a, int b) {         // definition
+    return a + b;
+}
+```
+
+**Output di terminal:**
+
+```text
+8
+```
+
+:::tip
+Pada prototype, nama parameter boleh dihilangkan: `int add(int, int);`.
+Meskipun begitu, menuliskan nama parameter membuat prototype lebih mudah
+dipahami.
+:::
+
+---
+
+## Parameter dan Argument
+
+| Istilah | Penjelasan |
+| :--- | :--- |
+| **Parameter** | Variabel yang ditulis pada definition function. Berperan sebagai *placeholder*. |
+| **Argument** | Nilai sebenarnya yang dikirim ketika function dipanggil. |
+
+```c
+#include <stdio.h>
+
+void kurang(int a, int b) {      // a dan b adalah parameter
+    printf("%d - %d = %d\n", a, b, a - b);
+}
+
+int main(void) {
+    kurang(10, 3);               // 10 dan 3 adalah argument
+    kurang(3, 10);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+10 - 3 = 7
+3 - 10 = -7
+```
+
+Argument dipasangkan dengan parameter **berdasarkan urutannya**:
+
+```text
+kurang(10, 3)
+        │   └── 3  → parameter b
+        └────── 10 → parameter a
+```
+
+Setiap parameter harus menuliskan tipe datanya masing-masing:
+
+```c
+int hitungVolume(int panjang, int lebar, int tinggi)   // benar
+int hitungVolume(int panjang, lebar, tinggi)           // salah
+```
+
+### Passing Arguments by Value
+
+Pada C, argument dikirim secara **by value**: function menerima
+**salinan** nilai. Perubahan pada parameter **tidak memengaruhi**
+variabel asli.
+
+```c
+#include <stdio.h>
+
+void increment(int x) {
+    x = x + 1;
+    printf("Di dalam function: x = %d\n", x);
+}
+
+int main(void) {
+    int angka = 5;
+
+    increment(angka);
+
+    printf("Di luar function: angka = %d\n", angka);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Di dalam function: x = 6
+Di luar function: angka = 5
+```
+
+```text
+main                         increment
+┌──────────────┐             ┌──────────────┐
+│ angka = 5    │ ── salin ─▶ │ x = 5        │
+└──────────────┘             └──────────────┘
+                                   │ x = x + 1
+                                   ▼
+┌──────────────┐             ┌──────────────┐
+│ angka = 5    │             │ x = 6        │
+└──────────────┘             └──────────────┘
+ (tidak berubah)
+```
+
+:::warning
+Jika kita ingin function menghasilkan nilai baru, gunakan `return` dan
+simpan hasilnya:
+
+```c
+int increment(int x) {
+    return x + 1;
+}
+
+angka = increment(angka);
+```
+
+:::
+
+---
+
+## Mengembalikan Nilai (Return)
+
+Function mengirim nilai kembali kepada pemanggilnya menggunakan `return`.
+Tipe nilai yang dikembalikan harus sesuai dengan **return type**.
+
+```c
+int multiply(int a, int b) {
+    return a * b;
+}
+```
+
+`return` juga **mengakhiri function**: kode setelahnya tidak dijalankan.
+Sifat ini sering dimanfaatkan bersama `if`.
+
+Pada C, hasil benar/salah biasanya direpresentasikan dengan `1` (benar)
+dan `0` (salah), sehingga hasil function dapat langsung dipakai sebagai
+condition:
+
+```c
+#include <stdio.h>
+
+int isGenap(int n) {
+    if (n % 2 == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    if (isGenap(10)) {
+        printf("10 adalah bilangan genap\n");
+    }
+
+    if (!isGenap(7)) {
+        printf("7 adalah bilangan ganjil\n");
+    }
+
+    printf("6 x 7 = %d\n", 6 * 7);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+10 adalah bilangan genap
+7 adalah bilangan ganjil
+6 x 7 = 42
+```
+
+### Tipe Return Selain `int`
+
+Return type dapat berupa tipe data apa pun, tidak hanya `int`.
+
+| Return Type | Contoh Return | Format pada `printf` |
+| :--- | :--- | :--- |
+| `int` | `return 10;` | `%d` |
+| `float` | `return 3.14f;` | `%f` |
+| `double` | `return 3.14;` | `%f` |
+| `char` | `return 'A';` | `%c` |
+
+```c
+#include <stdio.h>
+
+char nilaiHuruf(int skor) {
+    if (skor >= 85) {
+        return 'A';
+    }
+
+    if (skor >= 70) {
+        return 'B';
+    }
+
+    if (skor >= 55) {
+        return 'C';
+    }
+
+    if (skor >= 40) {
+        return 'D';
+    }
+
+    return 'E';
+}
+
+float rataRata(int a, int b) {
+    return (a + b) / 2.0f;
+}
+
+int main(void) {
+    printf("Skor 90 = %c\n", nilaiHuruf(90));
+    printf("Skor 72 = %c\n", nilaiHuruf(72));
+    printf("Skor 30 = %c\n", nilaiHuruf(30));
+
+    printf("Rata-rata 7 dan 8 = %.2f\n", rataRata(7, 8));
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Skor 90 = A
+Skor 72 = B
+Skor 30 = E
+Rata-rata 7 dan 8 = 7.50
+```
+
+Pada `nilaiHuruf`, setiap `return` langsung mengakhiri function, sehingga
+kita tidak perlu menuliskan `else`.
+
+---
+
+## Void Function (Procedure)
+
+Tidak semua function perlu mengembalikan nilai. Function yang hanya
+**melakukan suatu aksi** disebut **procedure** atau **void function**,
+dan menggunakan `void` sebagai return type.
+
+```c
+#include <stdio.h>
+
+void printMessage(void) {
+    printf("Hello, World!\n");
+}
+
+void tampilkanGaris(int panjang) {
+    for (int i = 0; i < panjang; i++) {
+        printf("=");
+    }
+
+    printf("\n");
+}
+
+int main(void) {
+    printMessage();
+    tampilkanGaris(13);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Hello, World!
+=============
+```
+
+Karena tidak mengembalikan nilai, procedure **tidak dapat** disimpan ke
+variabel:
+
+```c
+int x = printMessage();   // salah
+```
+
+:::info
+Untuk function tanpa parameter, tuliskan `(void)` secara eksplisit,
+misalnya `void printMessage(void)`. Jika hanya ditulis `()`, compiler pada
+standar C sebelum C23 tidak memeriksa argument yang diberikan saat
+function dipanggil, sehingga `(void)` lebih aman.
+:::
+
+### Return pada Procedure
+
+Pada procedure, `return;` (tanpa nilai) dapat digunakan untuk menghentikan
+function lebih awal.
+
+```c
+#include <stdio.h>
+
+void bagi(int a, int b) {
+    if (b == 0) {
+        printf("Pembagian dengan nol tidak diperbolehkan\n");
+        return;
+    }
+
+    printf("%d / %d = %d\n", a, b, a / b);
+}
+
+int main(void) {
+    bagi(10, 2);
+    bagi(5, 0);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+10 / 2 = 5
+Pembagian dengan nol tidak diperbolehkan
+```
+
+### Function vs Procedure
+
+| Function | Procedure |
+| :--- | :--- |
+| Mengembalikan sebuah nilai | Tidak mengembalikan nilai |
+| Return type: `int`, `float`, `char`, dll. | Return type: `void` |
+| Umumnya untuk **menghitung** sesuatu | Umumnya untuk **melakukan aksi** |
+| `int hasil = add(2, 3);` | `printMessage();` |
+
+:::info
+Secara teknis, pada bahasa C keduanya sama-sama disebut *function*.
+Istilah **procedure** hanya digunakan untuk membedakan function yang
+tidak mengembalikan nilai.
+:::
+
+---
+
+## Variable Scope
+
+**Scope** menentukan di mana sebuah variabel dapat diakses. Ada dua jenis
+utama.
+
+### Local Variable
+
+Variabel yang dideklarasikan **di dalam function atau block** (`{ }`).
+
+- **Scope:** hanya di function atau block tempat variabel dibuat.
+- **Lifetime:** hanya ada selama function atau block dijalankan.
+
+```c
+#include <stdio.h>
+
+void myFunction(void) {
+    int x = 10;   // x adalah local variable milik myFunction
+    printf("%d\n", x);
+}
+
+int main(void) {
+    myFunction();
+    printf("%d\n", x);   // error: x tidak dikenal di main
+
+    return 0;
+}
+```
+
+Parameter function juga merupakan local variable. Hal yang sama berlaku
+pada block seperti `if` dan `for`:
+
+```c
+for (int i = 0; i < 3; i++) {
+    printf("%d\n", i);
+}
+
+printf("%d\n", i);   // error: i hanya hidup di dalam loop
+```
+
+### Block Scope
+
+Setiap **block** (`{ ... }`), misalnya isi `if`, `for`, atau `while`,
+memiliki scope sendiri. Variabel di dalam block hanya dapat digunakan di
+block tersebut **dan block yang berada di dalamnya**.
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int pilihan = 2;
+
+    if (pilihan == 2) {
+        int kode = 111;   // kode hanya dikenal di dalam block if ini
+
+        printf("Kode anda: %d\n", kode);
+
+        if (kode == 111) {
+            // kode masih dapat digunakan di block yang lebih dalam
+            printf("Kode anda lagi: %d\n", kode);
+        }
+    }
+
+    // printf("%d\n", kode);   // error: kode berada di luar scope
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Kode anda: 111
+Kode anda lagi: 111
+```
+
+```text
+Block luar  → tidak dapat melihat variabel milik block dalam
+Block dalam → dapat melihat variabel milik block luar
+```
+
+### Global Variable
+
+Variabel yang dideklarasikan **di luar semua function**.
+
+- **Scope:** dapat diakses dari function mana pun pada file yang sama.
+- **Lifetime:** ada selama program berjalan.
+
+```c
+#include <stdio.h>
+
+int y = 5;   // y adalah global variable
+
+void myFunction(void) {
+    printf("%d\n", y);   // y dapat diakses di sini
+}
+
+int main(void) {
+    myFunction();
+    y = 20;               // dan dapat diubah di sini
+    myFunction();
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+5
+20
+```
+
+Jika local variable memiliki nama yang sama dengan global variable, maka
+di dalam function tersebut **local variable yang dipakai**.
+
+| Local Variable | Global Variable |
+| :--- | :--- |
+| Dideklarasikan di dalam function/block | Dideklarasikan di luar semua function |
+| Hanya dapat diakses di tempat ia dibuat | Dapat diakses dari seluruh file |
+| Hilang saat function/block selesai | Ada selama program berjalan |
+
+:::warning
+Hindari terlalu banyak menggunakan global variable. Karena dapat diubah
+dari function mana pun, nilainya sulit dilacak ketika terjadi kesalahan.
+Lebih baik kirim data melalui **parameter** dan terima hasilnya melalui
+**return**.
+:::
+
+---
+
+## Contoh Penerapan Function
+
+### Menghitung Volume Beberapa Kubus
+
+Function berikut menghitung total volume `n` buah kubus identik. Perhatikan
+penggunaan **prototype** di atas `main`, dengan definition di bawahnya.
+
+```c
+#include <stdio.h>
+
+// Declaration (prototype)
+float hitungVolumeNKubus(float panjangSisi, int n);
+
+int main(void) {
+    float sisi;
+    int jumlah;
+
+    printf("Masukkan panjang sisi kubus: ");
+    scanf("%f", &sisi);
+
+    printf("Masukkan jumlah kubus: ");
+    scanf("%d", &jumlah);
+
+    float hasil = hitungVolumeNKubus(sisi, jumlah);
+
+    printf("Volume total: %.2f\n", hasil);
+
+    return 0;
+}
+
+// Definition
+float hitungVolumeNKubus(float panjangSisi, int n) {
+    float totalVolume = 0.0f;
+
+    for (int i = 1; i <= n; i++) {
+        float volumeSatuKubus = panjangSisi * panjangSisi * panjangSisi;
+        totalVolume += volumeSatuKubus;
+    }
+
+    return totalVolume;
+}
+```
+
+**Output di terminal:**
+
+```text
+Masukkan panjang sisi kubus: 4
+Masukkan jumlah kubus: 10
+Volume total: 640.00
+```
+
+Volume satu kubus adalah `4 × 4 × 4 = 64`, sehingga untuk `10` kubus
+totalnya `640`.
+
+### Reusability: Satu Function, Banyak Pemanggilan
+
+Pada contoh berikut, `mintaAngka` dipanggil tiga kali dengan argument
+berbeda. Tanpa function, blok kode untuk meminta input harus ditulis
+tiga kali.
+
+```c
+#include <stdio.h>
+
+int mintaAngka(int urutan);
+int hitungJumlah(int a, int b, int c);
+
+int main(void) {
+    int a = mintaAngka(1);
+    int b = mintaAngka(2);
+    int c = mintaAngka(3);
+
+    printf("Jumlah ketiga bilangan: %d\n", hitungJumlah(a, b, c));
+
+    return 0;
+}
+
+int mintaAngka(int urutan) {
+    int angka;
+
+    printf("============================\n");
+    printf("Masukkan bilangan ke-%d: ", urutan);
+    scanf("%d", &angka);
+    printf("============================\n");
+
+    return angka;
+}
+
+int hitungJumlah(int a, int b, int c) {
+    return a + b + c;
+}
+```
+
+**Output di terminal:**
+
+```text
+============================
+Masukkan bilangan ke-1: 3
+============================
+============================
+Masukkan bilangan ke-2: 4
+============================
+============================
+Masukkan bilangan ke-3: 5
+============================
+Jumlah ketiga bilangan: 12
+```
+
+### Kalkulator Sederhana
+
+Setiap operasi dibuat sebagai function tersendiri, sehingga `main` hanya
+bertugas mengatur alur program.
+
+```c
+#include <stdio.h>
+
+int tambah(int a, int b) {
+    return a + b;
+}
+
+int kurangi(int a, int b) {
+    return a - b;
+}
+
+int kali(int a, int b) {
+    return a * b;
+}
+
+float bagi(int a, int b) {
+    return (float) a / b;
+}
+
+int main(void) {
+    int x, y;
+
+    printf("Masukkan dua bilangan: ");
+    scanf("%d %d", &x, &y);
+
+    printf("%d + %d = %d\n", x, y, tambah(x, y));
+    printf("%d - %d = %d\n", x, y, kurangi(x, y));
+    printf("%d x %d = %d\n", x, y, kali(x, y));
+
+    if (y != 0) {
+        printf("%d / %d = %.2f\n", x, y, bagi(x, y));
+    } else {
+        printf("Pembagian dengan nol tidak dapat dilakukan\n");
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Masukkan dua bilangan: 10 4
+10 + 4 = 14
+10 - 4 = 6
+10 x 4 = 40
+10 / 4 = 2.50
+```
+
+Function `bagi` mengembalikan `float`. Perhatikan `(float) a / b`:
+tanpa casting, `10 / 4` pada bilangan bulat menghasilkan `2`.
+
+### Refactoring: Dari Satu `main` Menjadi Beberapa Function
+
+Program berikut menghitung nilai akhir dua mahasiswa dengan bobot
+**tugas 30%, UTS 30%, UAS 40%**, serta menentukan status lulus jika nilai
+akhir minimal `60`.
+
+**Sebelum** (semua di dalam `main`):
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    // Mahasiswa 1: tugas 80, UTS 70, UAS 90
+    float nilai1 = 0.3f * 80 + 0.3f * 70 + 0.4f * 90;
+    printf("Mahasiswa 1: %.2f\n", nilai1);
+
+    if (nilai1 >= 60) {
+        printf("Status: Lulus\n");
+    } else {
+        printf("Status: Tidak Lulus\n");
+    }
+
+    // Mahasiswa 2: tugas 50, UTS 70, UAS 40
+    float nilai2 = 0.3f * 50 + 0.3f * 70 + 0.4f * 40;
+    printf("Mahasiswa 2: %.2f\n", nilai2);
+
+    if (nilai2 >= 60) {
+        printf("Status: Lulus\n");
+    } else {
+        printf("Status: Tidak Lulus\n");
+    }
+
+    return 0;
+}
+```
+
+**Sesudah** (dipecah menjadi function dan procedure):
+
+```c
+#include <stdio.h>
+
+float nilaiAkhir(int tugas, int uts, int uas) {
+    return 0.3f * tugas + 0.3f * uts + 0.4f * uas;
+}
+
+void tampilkanHasil(int nomor, float nilai) {
+    printf("Mahasiswa %d: %.2f\n", nomor, nilai);
+
+    if (nilai >= 60) {
+        printf("Status: Lulus\n");
+    } else {
+        printf("Status: Tidak Lulus\n");
+    }
+}
+
+int main(void) {
+    tampilkanHasil(1, nilaiAkhir(80, 70, 90));
+    tampilkanHasil(2, nilaiAkhir(50, 70, 40));
+
+    return 0;
+}
+```
+
+Kedua versi menghasilkan output yang sama:
+
+```text
+Mahasiswa 1: 81.00
+Status: Lulus
+Mahasiswa 2: 52.00
+Status: Tidak Lulus
+```
+
+Perhatikan pembagian tugasnya:
+
+```text
+nilaiAkhir      → function  (menghitung dan mengembalikan nilai)
+tampilkanHasil  → procedure (menampilkan hasil, tidak mengembalikan nilai)
+main            → mengatur alur program
+```
+
+### Program Menu dengan Procedure
+
+Procedure sangat cocok untuk bagian program yang hanya menampilkan
+sesuatu, misalnya menu. Contoh berikut menggabungkan procedure, function,
+dan `do-while` dari materi loop.
+
+```c
+#include <stdio.h>
+
+void tampilkanMenu(void) {
+    printf("\n=== MENU ===\n");
+    printf("1. Luas persegi\n");
+    printf("2. Keliling persegi\n");
+    printf("0. Keluar\n");
+    printf("Pilihan: ");
+}
+
+int luasPersegi(int sisi) {
+    return sisi * sisi;
+}
+
+int kelilingPersegi(int sisi) {
+    return 4 * sisi;
+}
+
+int main(void) {
+    int pilihan, sisi;
+
+    do {
+        tampilkanMenu();
+        scanf("%d", &pilihan);
+
+        if (pilihan == 1 || pilihan == 2) {
+            printf("Masukkan sisi: ");
+            scanf("%d", &sisi);
+
+            if (pilihan == 1) {
+                printf("Luas = %d\n", luasPersegi(sisi));
+            } else {
+                printf("Keliling = %d\n", kelilingPersegi(sisi));
+            }
+        } else if (pilihan != 0) {
+            printf("Pilihan tidak valid\n");
+        }
+    } while (pilihan != 0);
+
+    printf("Terima kasih!\n");
+
+    return 0;
+}
+```
+
+**Contoh jalannya program:**
+
+```text
+
+=== MENU ===
+1. Luas persegi
+2. Keliling persegi
+0. Keluar
+Pilihan: 1
+Masukkan sisi: 5
+Luas = 25
+
+=== MENU ===
+1. Luas persegi
+2. Keliling persegi
+0. Keluar
+Pilihan: 9
+Pilihan tidak valid
+
+=== MENU ===
+1. Luas persegi
+2. Keliling persegi
+0. Keluar
+Pilihan: 0
+Terima kasih!
+```
+
+---
+
+## Best Practices
+
+Beberapa kebiasaan baik dalam menulis function:
+
+- **Satu function, satu tugas.** Function yang fokus lebih mudah dipahami dan diuji.
+- **Hindari function yang terlalu panjang.** Jika sebuah function terlalu panjang, pertimbangkan untuk memecahnya.
+- **Gunakan nama yang deskriptif** untuk function dan parameter.
+- **Gunakan kembali function** untuk menghindari kode yang berulang.
+
+| Kurang baik | Lebih baik |
+| :--- | :--- |
+| `int f(int a, int b)` | `int hitungLuas(int panjang, int lebar)` |
+| `void p(void)` | `void tampilkanMenu(void)` |
+| `int x(int n)` | `int isGenap(int n)` |
+
+---
+
+## Common Errors pada Function
+
+### 1. Lupa Mengembalikan Nilai
+
+```c
+int add(int a, int b) {
+    int hasil = a + b;
+    // lupa return hasil;
+}
+```
+
+Function ber-return type `int` harus mengembalikan nilai. Jika tidak,
+hasil yang diterima pemanggil tidak dapat diandalkan.
+
+### 2. Function Belum Dideklarasikan Sebelum Dipakai
+
+C membaca kode dari atas ke bawah. Jika sebuah function dipanggil
+**sebelum** compiler mengenalnya, compiler akan menampilkan peringatan
+atau error.
+
+Contoh yang salah:
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    printf("%d\n", add(5, 3));   // add belum dikenal compiler
+
+    return 0;
+}
+
+int add(int a, int b) {
+    return a + b;
+}
+```
+
+Pesan yang muncul pada compiler (`gcc`) kurang lebih:
+
+```text
+warning: implicit declaration of function 'add'
+```
+
+Pada compiler versi yang lebih baru, pesan ini dapat berupa **error**.
+
+Penyebabnya, ketika `main` memanggil `add(5, 3)`, compiler belum pernah
+melihat `add` karena definition-nya berada di bawah `main`.
+
+**Perbaikan 1:** tambahkan prototype di atas `main`.
+
+```c
+#include <stdio.h>
+
+int add(int a, int b);   // prototype
+
+int main(void) {
+    printf("%d\n", add(5, 3));
+
+    return 0;
+}
+
+int add(int a, int b) {
+    return a + b;
+}
+```
+
+**Perbaikan 2:** pindahkan definition ke atas `main`.
+
+```c
+#include <stdio.h>
+
+int add(int a, int b) {
+    return a + b;
+}
+
+int main(void) {
+    printf("%d\n", add(5, 3));
+
+    return 0;
+}
+```
+
+Kedua perbaikan menghasilkan output yang sama:
+
+```text
+8
+```
+
+### 3. Jumlah atau Tipe Argument Tidak Sesuai
+
+```c
+int add(int a, int b) {
+    return a + b;
+}
+
+int hasil = add(5);       // salah: kurang satu argument
+int hasil2 = add(2.7, 1); // 2.7 dipotong menjadi 2
+```
+
+Jumlah, urutan, dan tipe argument harus sesuai dengan parameter.
+
+### 4. Mengharapkan Variabel Asli Berubah
+
+Karena argument dikirim secara *by value*, perubahan pada parameter tidak
+memengaruhi variabel di pemanggil. Gunakan `return` untuk mengirim hasil
+kembali.
+
+---
+
+## Ringkasan
+
+Pada materi ini, kita telah mempelajari:
+
+- **Function** adalah blok kode bernama yang menjalankan satu tugas tertentu, dengan manfaat **modularity, reusability, maintainability,** dan **abstraction**.
+- Function terdiri atas **return type, nama, parameter, body,** dan **return statement**.
+- **Declaration (prototype)** menyebutkan nama, return type, dan parameter tanpa body, sedangkan **definition** berisi kode lengkap function.
+- **Parameter** adalah placeholder pada definition, sedangkan **argument** adalah nilai yang dikirim saat function dipanggil.
+- Argument dikirim secara **by value**, sehingga perubahan pada parameter tidak memengaruhi variabel asli.
+- **Procedure (void function)** tidak mengembalikan nilai dan digunakan untuk melakukan aksi.
+- **Local variable** hanya dapat diakses di function atau block tempat ia dibuat, sedangkan **global variable** dapat diakses dari seluruh file.
+- Sebuah function dapat memanggil function lain, dan hasil pemanggilannya dapat langsung dipakai dalam ekspresi.
+- **Block scope** berlaku pada setiap `{ ... }`. Block dalam dapat melihat variabel block luar, tetapi tidak sebaliknya.
+- **Best practices:** satu function untuk satu tugas, hindari function yang terlalu panjang, dan gunakan nama yang deskriptif.
+
+Secara umum:
+
+```text
+Function
+→ menghitung sesuatu dan mengembalikan nilai
+
+Procedure
+→ melakukan suatu aksi tanpa mengembalikan nilai
+```
+
+---
+
+## Istilah Penting
+
+| Istilah | Arti |
+| :--- | :--- |
+| **Function** | Blok kode bernama yang menjalankan satu tugas dan (umumnya) mengembalikan nilai |
+| **Procedure** | Function ber-return type `void` yang tidak mengembalikan nilai |
+| **Prototype / Declaration** | Penulisan nama, return type, dan parameter function tanpa body |
+| **Definition** | Penulisan function lengkap beserta body-nya |
+| **Parameter** | Variabel pada definition function yang menerima nilai |
+| **Argument** | Nilai yang dikirim ketika function dipanggil |
+| **Return value** | Nilai yang dikembalikan function dengan `return` |
+| **Pass by value** | Argument dikirim sebagai salinan, sehingga variabel asli tidak berubah |
+| **Scope** | Daerah tempat sebuah variabel dapat diakses |
+| **Local variable** | Variabel yang dideklarasikan di dalam function atau block |
+| **Global variable** | Variabel yang dideklarasikan di luar semua function |
