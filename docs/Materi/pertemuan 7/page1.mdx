@@ -1,0 +1,1733 @@
+---
+sidebar_position: 1
+description: "Pengenalan pointer, alamat memori, dan pengelolaan memori dalam bahasa C"
+---
+
+# Pointers in C
+
+Pada materi sebelumnya, kita telah mempelajari variabel sebagai tempat
+untuk menyimpan data, serta function untuk membagi program menjadi
+bagian-bagian yang lebih kecil.
+
+Namun, bagaimana jika kita ingin mengetahui lokasi sebuah variabel
+di dalam memori komputer? Bagaimana jika sebuah function perlu
+mengubah nilai variabel yang berada di luar function tersebut?
+
+Untuk melakukan hal-hal tersebut, bahasa C menyediakan sebuah konsep
+yang disebut **Pointer**.
+
+Pointer memungkinkan kita bekerja dengan alamat memori secara langsung.
+Konsep ini menjadi salah satu bagian penting dalam bahasa C karena
+berhubungan dengan cara data disimpan, diakses, dan dikelola di memori.
+
+---
+
+## Apa itu Pointer?
+
+**Pointer** adalah sebuah variabel yang digunakan untuk menyimpan
+**alamat memori dari variabel lain**.
+
+Pada materi sebelumnya, kita biasanya menggunakan variabel secara
+langsung untuk menyimpan dan mengakses sebuah nilai.
+
+Contoh:
+
+```c
+int angka = 10;
+```
+
+Pada kode tersebut, variabel `angka` menyimpan nilai:
+
+```text
+10
+```
+
+Namun, setiap variabel juga memiliki lokasi penyimpanan tersendiri
+di dalam memori komputer. Lokasi tersebut memiliki alamat memori.
+
+Pointer memungkinkan kita menyimpan alamat tersebut ke dalam
+variabel lain.
+
+Sebagai contoh:
+
+```c
+int angka = 10;
+int *ptr = &angka;
+```
+
+Sekarang kita memiliki dua variabel:
+
+```text
+angka → menyimpan nilai 10
+ptr   → menyimpan alamat memori dari angka
+```
+
+Dengan kata lain, `ptr` tidak menyimpan nilai `10` secara langsung.
+Pointer tersebut menyimpan alamat tempat nilai `10` berada.
+
+### Mengapa Menggunakan Pointer?
+
+Pointer memiliki beberapa kegunaan penting dalam bahasa C:
+
+1. **Pengelolaan memori yang lebih fleksibel**
+
+   Pointer digunakan untuk mengakses lokasi memori secara langsung
+   dan menjadi bagian penting dalam pengelolaan memori dinamis.
+
+2. **Mengirim data ke function tanpa menyalin seluruh data**
+
+   Pointer dapat digunakan ketika sebuah function perlu mengakses
+   data yang sudah ada, misalnya array atau struktur data berukuran
+   besar.
+
+3. **Dynamic Memory Allocation**
+
+   Pointer digunakan untuk menyimpan alamat memori yang diperoleh
+   ketika program meminta alokasi memori secara dinamis.
+
+4. **Membangun struktur data**
+
+   Pointer menjadi salah satu dasar untuk membangun struktur data
+   seperti linked list, tree, dan struktur data lainnya.
+
+---
+
+## Bagaimana Pointer Bekerja di Memori?
+
+Setiap variabel yang dibuat dalam program akan ditempatkan pada
+suatu lokasi di memori komputer.
+
+Setiap lokasi memori memiliki alamat yang dapat digunakan untuk
+menunjuk lokasi tersebut.
+
+Misalnya kita memiliki:
+
+```c
+int angka = 10;
+```
+
+Secara sederhana, kita dapat membayangkan bahwa variabel `angka`
+memiliki alamat memori tertentu.
+
+```text
+Nama Variabel : angka
+Nilai         : 10
+Alamat        : 0x1000
+```
+
+Alamat `0x1000` pada contoh tersebut hanya ilustrasi.
+Alamat sebenarnya ditentukan oleh sistem ketika program dijalankan.
+
+Sekarang kita membuat pointer:
+
+```c
+int *ptr = &angka;
+```
+
+Operator `&` digunakan untuk mendapatkan alamat memori dari sebuah
+variabel.
+
+Maka pointer `ptr` menyimpan alamat milik `angka`.
+
+```text
+Variabel angka                 Pointer ptr
+
+Alamat : 0x1000               Nilai : 0x1000
+Nilai  : 10
+       ┌───────────────┐
+       │               │
+       └───────────────┘
+              ▲
+              │
+              └──────── ptr menunjuk ke angka
+```
+
+Jadi, ada dua hal yang perlu dibedakan:
+
+- **Nilai variabel** adalah data yang disimpan oleh variabel.
+- **Alamat variabel** adalah lokasi tempat data tersebut disimpan
+  di memori.
+
+### Contoh Program
+
+```c
+#include <stdio.h>
+
+int main() {
+    int angka = 10;
+    int *ptr = &angka;
+
+    printf("Nilai angka       : %d\n", angka);
+    printf("Alamat angka      : %p\n", (void *)&angka);
+    printf("Alamat dalam ptr  : %p\n", (void *)ptr);
+
+    return 0;
+}
+```
+
+**Contoh output di terminal:**
+
+```text
+Nilai angka       : 10
+Alamat angka      : 0x...
+Alamat dalam ptr  : 0x...
+```
+
+Perhatikan bahwa alamat yang ditampilkan dapat berbeda pada setiap
+komputer atau setiap kali program dijalankan.
+
+Namun, alamat yang ditampilkan oleh `&angka` dan alamat yang disimpan
+di dalam `ptr` akan merujuk ke lokasi yang sama.
+
+:::info
+Untuk menampilkan alamat pointer menggunakan `printf()`, gunakan
+format specifier `%p`.
+
+Argumen alamat dituliskan sebagai `(void *)`, misalnya:
+
+```c
+printf("%p\n", (void *)ptr);
+```
+
+Jangan menganggap alamat memori selalu memiliki nilai yang sama.
+Alamat tersebut ditentukan ketika program dijalankan.
+:::
+
+---
+
+## Declaring and Initializing Pointers
+
+Sama seperti variabel biasa, pointer juga harus dideklarasikan
+sebelum digunakan.
+
+### Syntax Pointer
+
+Bentuk umum deklarasi pointer adalah:
+
+```c
+data_type *pointer_name;
+```
+
+Keterangan:
+
+- `data_type` menentukan tipe data yang akan ditunjuk oleh pointer.
+- `*` menunjukkan bahwa variabel yang dideklarasikan merupakan pointer.
+- `pointer_name` merupakan nama dari variabel pointer.
+
+Contoh:
+
+```c
+int *ptr;
+```
+
+Kode tersebut mendeklarasikan pointer bernama `ptr` yang digunakan
+untuk menunjuk data bertipe `int`.
+
+Contoh lainnya:
+
+```c
+char *ptrChar;
+float *ptrFloat;
+double *ptrDouble;
+```
+
+Tipe data pointer perlu disesuaikan dengan tipe data yang akan
+ditunjuk.
+
+### Initializing a Pointer
+
+Setelah pointer dideklarasikan, kita dapat menginisialisasinya
+dengan alamat sebuah variabel.
+
+Untuk mendapatkan alamat variabel, kita menggunakan operator:
+
+```c
+&
+```
+
+Contoh:
+
+```c
+#include <stdio.h>
+
+int main() {
+    int angka = 10;
+    int *ptr = &angka;
+
+    printf("Nilai angka: %d\n", angka);
+    printf("Alamat angka: %p\n", (void *)&angka);
+    printf("Alamat ptr: %p\n", (void *)ptr);
+
+    return 0;
+}
+```
+
+Pada baris:
+
+```c
+int *ptr = &angka;
+```
+
+terjadi dua hal:
+
+1. `int *ptr` mendeklarasikan pointer bertipe `int`.
+2. `&angka` mengambil alamat memori dari variabel `angka`.
+
+Sehingga `ptr` sekarang menunjuk ke variabel `angka`.
+
+:::warning
+Hindari menggunakan pointer yang belum diinisialisasi.
+
+Contoh:
+
+```c
+int *ptr;
+```
+
+Pada tahap ini, `ptr` belum memiliki alamat tujuan yang valid.
+Jangan langsung mengakses `*ptr` sebelum pointer tersebut diarahkan
+ke objek yang valid atau diinisialisasi dengan `NULL`.
+:::
+
+---
+
+## Dereferencing a Pointer
+
+Setelah pointer menyimpan alamat suatu variabel, bagaimana cara
+mengakses nilai yang berada di alamat tersebut?
+
+Kita menggunakan proses yang disebut **Dereferencing**.
+
+**Dereferencing** adalah proses mengakses nilai yang berada pada
+lokasi memori yang ditunjuk oleh sebuah pointer.
+
+Untuk melakukan dereferencing, kita menggunakan operator:
+
+```c
+*
+```
+
+Perhatikan contoh berikut:
+
+```c
+#include <stdio.h>
+
+int main() {
+    int angka = 10;
+    int *ptr = &angka;
+
+    printf("Nilai angka: %d\n", angka);
+    printf("Nilai melalui pointer: %d\n", *ptr);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Nilai angka: 10
+Nilai melalui pointer: 10
+```
+
+Pada kode:
+
+```c
+*ptr
+```
+
+kita tidak sedang mengambil alamat pointer, melainkan mengakses
+nilai yang berada pada alamat yang disimpan oleh `ptr`.
+
+Karena `ptr` menunjuk ke `angka`, maka:
+
+```c
+*ptr
+```
+
+memiliki nilai yang sama dengan:
+
+```c
+angka
+```
+
+### Mengubah Nilai Melalui Pointer
+
+Dereferencing tidak hanya digunakan untuk membaca nilai.
+Kita juga dapat mengubah nilai variabel melalui pointer.
+
+Contoh:
+
+```c
+#include <stdio.h>
+
+int main() {
+    int angka = 10;
+    int *ptr = &angka;
+
+    *ptr = 25;
+
+    printf("Nilai angka: %d\n", angka);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Nilai angka: 25
+```
+
+Perhatikan baris:
+
+```c
+*ptr = 25;
+```
+
+Baris tersebut mengubah nilai pada lokasi memori yang ditunjuk
+oleh `ptr`.
+
+Karena `ptr` menunjuk ke `angka`, nilai `angka` juga berubah
+menjadi `25`.
+
+```text
+Sebelum:
+
+angka = 10
+ptr ───────► angka
+
+Setelah *ptr = 25:
+
+angka = 25
+ptr ───────► angka
+```
+
+Jadi, pointer memungkinkan kita membaca maupun mengubah nilai
+sebuah variabel melalui alamat memorinya.
+
+---
+
+## Null Pointers
+
+**Null Pointer** adalah pointer yang tidak menunjuk ke objek atau
+lokasi memori yang valid.
+
+Dalam bahasa C, nilai khusus `NULL` digunakan untuk menunjukkan
+bahwa pointer tidak sedang menunjuk ke objek tertentu.
+
+Contoh deklarasi:
+
+```c
+int *ptr = NULL;
+```
+
+Pada kode tersebut, pointer `ptr` sudah diinisialisasi, tetapi
+belum menunjuk ke variabel atau objek apa pun.
+
+### Mengapa Menggunakan NULL?
+
+Ketika sebuah pointer belum memiliki alamat tujuan, menginisialisasinya
+dengan `NULL` dapat membantu menghindari perilaku yang tidak terduga
+akibat pointer yang belum diinisialisasi.
+
+Kita juga dapat memeriksa apakah pointer bernilai `NULL` sebelum
+menggunakannya.
+
+Contoh:
+
+```c
+#include <stdio.h>
+
+int main() {
+    int *ptr = NULL;
+
+    if (ptr == NULL) {
+        printf("Pointer belum menunjuk ke objek.\n");
+    }
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Pointer belum menunjuk ke objek.
+```
+
+Perhatikan kondisi:
+
+```c
+ptr == NULL
+```
+
+Kondisi tersebut digunakan untuk memeriksa apakah pointer belum
+menunjuk ke objek.
+
+:::warning
+Jangan melakukan dereferencing terhadap null pointer.
+
+Contoh berikut tidak boleh dilakukan:
+
+```c
+int *ptr = NULL;
+
+printf("%d\n", *ptr);
+```
+
+Karena `ptr` tidak menunjuk ke objek yang valid, mengakses `*ptr`
+merupakan perilaku yang tidak terdefinisi (*undefined behavior*).
+:::
+
+---
+
+## Pointers and Arrays
+
+Dalam bahasa C, **array dan pointer memiliki hubungan yang erat**.
+
+Nama array pada sebagian besar expression akan dikonversi menjadi
+pointer yang menunjuk ke elemen pertamanya.
+
+Sebagai contoh:
+
+```c
+int arr[3] = {10, 20, 30};
+```
+
+Kita dapat membuat pointer yang menunjuk ke elemen pertama array
+tersebut:
+
+```c
+int *ptr = arr;
+```
+
+Dengan demikian:
+
+```text
+arr[0] = 10
+arr[1] = 20
+arr[2] = 30
+```
+
+dan:
+
+```text
+ptr menunjuk ke arr[0]
+```
+
+### Mengakses Elemen Array Menggunakan Pointer
+
+Perhatikan program berikut:
+
+```c
+#include <stdio.h>
+
+int main() {
+    int arr[3] = {10, 20, 30};
+    int *ptr = arr;
+
+    printf("Elemen pertama : %d\n", *ptr);
+    printf("Elemen kedua   : %d\n", *(ptr + 1));
+    printf("Elemen ketiga  : %d\n", *(ptr + 2));
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Elemen pertama : 10
+Elemen kedua   : 20
+Elemen ketiga  : 30
+```
+
+Pada program tersebut:
+
+```c
+int *ptr = arr;
+```
+
+membuat `ptr` menunjuk ke elemen pertama array.
+
+Kemudian:
+
+```c
+*ptr
+```
+
+digunakan untuk mengakses elemen pertama.
+
+Sedangkan:
+
+```c
+*(ptr + 1)
+```
+
+digunakan untuk mengakses elemen kedua.
+
+Dan:
+
+```c
+*(ptr + 2)
+```
+
+digunakan untuk mengakses elemen ketiga.
+
+Dalam konteks array, bentuk berikut memiliki hasil yang setara:
+
+```c
+arr[i]
+```
+
+dan:
+
+```c
+*(arr + i)
+```
+
+Contohnya:
+
+```c
+arr[1]
+```
+
+setara dengan:
+
+```c
+*(arr + 1)
+```
+
+:::info
+Nama array dan pointer bukan dua hal yang benar-benar sama.
+
+Nama array dapat dikonversi menjadi pointer ke elemen pertamanya
+dalam sebagian besar expression, tetapi array tetap merupakan
+objek array dengan ukuran dan karakteristiknya sendiri.
+:::
+
+---
+
+## Pointer Arithmetic
+
+**Pointer Arithmetic** adalah operasi aritmatika yang dilakukan
+terhadap pointer untuk berpindah ke elemen memori lain.
+
+Pointer dapat dinaikkan atau diturunkan untuk mengakses elemen
+yang berdekatan, terutama ketika digunakan bersama array.
+
+Contoh:
+
+```c
+int arr[3] = {10, 20, 30};
+int *ptr = arr;
+```
+
+Pada awalnya:
+
+```text
+ptr menunjuk ke arr[0]
+```
+
+Kita dapat menggunakan:
+
+```c
+ptr + 1
+```
+
+untuk menunjuk ke elemen berikutnya.
+
+### Menggunakan Increment pada Pointer
+
+Perhatikan program berikut:
+
+```c
+#include <stdio.h>
+
+int main() {
+    int arr[3] = {10, 20, 30};
+    int *ptr = arr;
+
+    printf("%d\n", *ptr);
+
+    ptr++;
+    printf("%d\n", *ptr);
+
+    ptr++;
+    printf("%d\n", *ptr);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+10
+20
+30
+```
+
+Pada awalnya:
+
+```text
+ptr → arr[0] → 10
+```
+
+Setelah:
+
+```c
+ptr++;
+```
+
+pointer berpindah ke elemen berikutnya:
+
+```text
+ptr → arr[1] → 20
+```
+
+Kemudian setelah `ptr++` dijalankan kembali:
+
+```text
+ptr → arr[2] → 30
+```
+
+### Pointer + 1 Tidak Selalu Berarti Satu Byte
+
+Hal penting yang perlu dipahami adalah operasi:
+
+```c
+ptr + 1
+```
+
+tidak selalu memindahkan alamat sebesar satu byte.
+
+Pointer akan berpindah sejauh ukuran tipe data yang ditunjuknya.
+
+Misalnya, jika `ptr` bertipe `int *`, maka `ptr + 1` menunjuk ke
+elemen `int` berikutnya.
+
+Secara konsep:
+
+```text
+ptr      → arr[0]
+ptr + 1  → arr[1]
+ptr + 2  → arr[2]
+```
+
+Jika ukuran `int` pada sistem yang digunakan adalah 4 byte,
+jarak alamat antara dua elemen `int` yang berurutan adalah 4 byte.
+
+:::warning
+Gunakan pointer arithmetic hanya pada elemen-elemen dalam array
+yang sama atau posisi satu elemen setelah elemen terakhir (*one-past
+the last element*).
+
+Pointer yang berada satu posisi setelah elemen terakhir tidak boleh
+di-dereference karena tidak menunjuk ke elemen array yang valid.
+:::
+
+---
+
+## Function Argument Passing in C
+
+Dalam bahasa C, function dapat menerima data melalui argument
+yang dikirimkan ketika function dipanggil.
+
+Ada dua konsep utama yang akan kita bahas:
+
+```text
+Pass by Value
+Pass by Reference (menggunakan Pointer)
+```
+
+Keduanya memiliki perbedaan dalam cara function mengakses dan
+mengubah variabel yang dikirimkan.
+
+---
+
+### Pass by Value
+
+**Pass by Value** adalah cara mengirimkan nilai sebuah variabel
+ke dalam function dengan memberikan salinannya.
+
+Artinya, function menerima variabel lokal yang memiliki salinan
+nilai dari variabel asli.
+
+Perubahan yang dilakukan pada salinan tersebut tidak akan mengubah
+variabel asli di luar function.
+
+Contoh:
+
+```c
+#include <stdio.h>
+
+void modify(int x) {
+    x = 20;
+}
+
+int main() {
+    int a = 10;
+
+    modify(a);
+
+    printf("Nilai a: %d\n", a);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Nilai a: 10
+```
+
+Mengapa hasilnya tetap `10`?
+
+Ketika:
+
+```c
+modify(a);
+```
+
+dijalankan, nilai `a` disalin ke parameter `x`.
+
+```text
+Variabel a       Parameter x
+    10   ─────►      10
+```
+
+Kemudian di dalam function:
+
+```c
+x = 20;
+```
+
+hanya nilai pada parameter lokal `x` yang berubah.
+
+Variabel `a` tetap menyimpan nilai awalnya:
+
+```text
+a = 10
+x = 20
+```
+
+Ketika function selesai dijalankan, parameter `x` tidak lagi
+digunakan dan nilai `a` tetap `10`.
+
+---
+
+### Pass by Reference Menggunakan Pointer
+
+Pada slide, metode ini disebut **Pass by Reference**.
+
+Konsepnya adalah mengirimkan alamat variabel ke dalam function
+menggunakan pointer, sehingga function dapat mengakses dan
+mengubah variabel aslinya.
+
+Perhatikan contoh berikut:
+
+```c
+#include <stdio.h>
+
+void modify(int *x) {
+    *x = 20;
+}
+
+int main() {
+    int a = 10;
+
+    modify(&a);
+
+    printf("Nilai a: %d\n", a);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Nilai a: 20
+```
+
+Perhatikan pemanggilan function:
+
+```c
+modify(&a);
+```
+
+Kita mengirimkan alamat dari variabel `a` menggunakan operator `&`.
+
+Kemudian function menerima alamat tersebut melalui parameter pointer:
+
+```c
+void modify(int *x)
+```
+
+Di dalam function, kita menggunakan:
+
+```c
+*x = 20;
+```
+
+untuk mengubah nilai pada alamat yang ditunjuk oleh `x`.
+
+Karena `x` menunjuk ke variabel `a`, nilai asli `a` berubah menjadi
+`20`.
+
+```text
+Sebelum function dipanggil:
+
+a = 10
+     ▲
+     │
+   alamat a
+
+
+Di dalam function:
+
+x menyimpan alamat a
+*x = 20
+
+
+Setelah function selesai:
+
+a = 20
+```
+
+Dengan demikian, pointer memungkinkan function mengubah nilai
+variabel yang berada di luar function tersebut.
+
+:::info
+Secara teknis, bahasa C menggunakan mekanisme **pass by value**.
+Ketika kita menggunakan pointer untuk mengubah variabel asli,
+yang dikirimkan ke function tetap berupa salinan nilai, tetapi
+nilai yang disalin tersebut adalah alamat memori.
+
+Istilah *pass by reference* pada bagian ini digunakan untuk
+menjelaskan efeknya, yaitu function dapat mengubah objek asli
+melalui pointer.
+:::
+
+---
+
+## Double Pointers (Pointer to Pointer)
+
+Selain menunjuk ke variabel biasa, sebuah pointer juga dapat menunjuk
+ke variabel pointer lainnya.
+
+Konsep ini disebut **Double Pointer** atau **Pointer to Pointer**.
+
+Double pointer adalah sebuah pointer yang menyimpan alamat dari
+variabel pointer lain.
+
+### Declaration Double Pointer
+
+Jika pointer biasa dideklarasikan menggunakan:
+
+```c
+int *ptr;
+```
+
+maka double pointer dapat dideklarasikan menggunakan:
+
+```c
+int **ptr2;
+```
+
+Contoh:
+
+```c
+int angka = 10;
+int *ptr = &angka;
+int **ptr2 = &ptr;
+```
+
+Pada kode tersebut terdapat tiga variabel:
+
+```text
+angka → menyimpan nilai 10
+ptr   → menyimpan alamat angka
+ptr2  → menyimpan alamat ptr
+```
+
+Hubungan ketiganya:
+
+```text
+ptr2 ─────► ptr ─────► angka
+                       Nilai: 10
+```
+
+### Contoh Program Double Pointer
+
+```c
+#include <stdio.h>
+
+int main() {
+    int angka = 10;
+
+    int *ptr = &angka;
+    int **ptr2 = &ptr;
+
+    printf("Nilai angka       : %d\n", angka);
+    printf("Melalui ptr       : %d\n", *ptr);
+    printf("Melalui double ptr: %d\n", **ptr2);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Nilai angka       : 10
+Melalui ptr       : 10
+Melalui double ptr: 10
+```
+
+Mari kita pahami penggunaan operator `*` pada setiap pointer.
+
+```c
+*ptr
+```
+
+digunakan untuk mengakses nilai yang ditunjuk oleh `ptr`, yaitu
+nilai `angka`.
+
+Sedangkan:
+
+```c
+*ptr2
+```
+
+mengakses nilai pointer `ptr`, yaitu alamat dari `angka`.
+
+Kemudian:
+
+```c
+**ptr2
+```
+
+mengakses nilai yang berada pada alamat tersebut, yaitu nilai
+`angka`.
+
+Double pointer dapat digunakan dalam struktur data yang lebih
+kompleks, termasuk beberapa bentuk representasi array dua dimensi
+dan pengelolaan pointer melalui function.
+
+---
+
+## Dynamic Memory Allocation with Pointers
+
+Selama ini, kita biasanya membuat variabel dengan menentukan
+tipe data dan ukuran penyimpanannya secara langsung.
+
+Contoh:
+
+```c
+int angka = 10;
+int arr[5];
+```
+
+Namun, terkadang sebuah program membutuhkan ruang memori yang
+ukurannya baru diketahui ketika program sedang berjalan.
+
+Untuk kebutuhan tersebut, bahasa C menyediakan mekanisme
+**Dynamic Memory Allocation**.
+
+Dynamic Memory Allocation adalah proses meminta ruang memori
+ketika program sedang berjalan.
+
+Pointer digunakan untuk menyimpan alamat dari ruang memori yang
+berhasil dialokasikan tersebut.
+
+Untuk menggunakan fungsi alokasi memori, kita perlu menyertakan:
+
+```c
+#include <stdlib.h>
+```
+
+Bahasa C menyediakan beberapa fungsi utama:
+
+| Function | Kegunaan |
+| :--- | :--- |
+| `malloc()` | Mengalokasikan sejumlah memori tanpa menginisialisasi isinya |
+| `calloc()` | Mengalokasikan memori dan menginisialisasi seluruh byte-nya menjadi nol |
+| `realloc()` | Mengubah ukuran blok memori yang telah dialokasikan |
+| `free()` | Melepaskan memori yang sebelumnya dialokasikan secara dinamis |
+
+---
+
+### malloc()
+
+`malloc()` (*Memory Allocation*) digunakan untuk meminta sejumlah
+ruang memori sesuai ukuran yang dibutuhkan.
+
+Bentuk umum:
+
+```c
+pointer = malloc(jumlah_byte);
+```
+
+Sebagai contoh, jika kita ingin menyediakan ruang untuk lima buah
+integer:
+
+```c
+int *arr = malloc(5 * sizeof(int));
+```
+
+Kode tersebut meminta memori yang cukup untuk menyimpan lima
+nilai bertipe `int`.
+
+Contoh program:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int *arr = malloc(5 * sizeof(int));
+
+    if (arr == NULL) {
+        printf("Alokasi memori gagal.\n");
+        return 1;
+    }
+
+    for (int i = 0; i < 5; i++) {
+        arr[i] = (i + 1) * 10;
+    }
+
+    for (int i = 0; i < 5; i++) {
+        printf("%d ", arr[i]);
+    }
+
+    printf("\n");
+
+    free(arr);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+10 20 30 40 50
+```
+
+Pada kode:
+
+```c
+malloc(5 * sizeof(int))
+```
+
+program meminta memori untuk lima buah integer.
+
+Hasil alokasi kemudian disimpan ke dalam pointer `arr`.
+
+Sebelum menggunakan memori tersebut, kita melakukan pemeriksaan:
+
+```c
+if (arr == NULL)
+```
+
+Jika alokasi gagal, `malloc()` akan mengembalikan `NULL`.
+
+Setelah selesai menggunakan memori, kita melepaskannya menggunakan:
+
+```c
+free(arr);
+```
+
+:::warning
+`malloc()` tidak menginisialisasi isi memori yang dialokasikan.
+
+Artinya, kita harus memberikan nilai terlebih dahulu sebelum
+membaca isi elemen yang dialokasikan menggunakan `malloc()`.
+:::
+
+---
+
+### calloc()
+
+`calloc()` (*Contiguous Allocation*) juga digunakan untuk
+mengalokasikan memori secara dinamis.
+
+Perbedaannya dengan `malloc()` adalah `calloc()` menginisialisasi
+seluruh byte pada blok memori yang dialokasikan menjadi nol.
+
+Bentuk umum:
+
+```c
+pointer = calloc(jumlah_elemen, ukuran_elemen);
+```
+
+Contoh:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int *arr = calloc(5, sizeof(int));
+
+    if (arr == NULL) {
+        printf("Alokasi memori gagal.\n");
+        return 1;
+    }
+
+    for (int i = 0; i < 5; i++) {
+        printf("%d ", arr[i]);
+    }
+
+    printf("\n");
+
+    free(arr);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+0 0 0 0 0
+```
+
+Karena kita menggunakan `calloc()`, elemen-elemen array telah
+diinisialisasi dengan nilai nol.
+
+Perhatikan perbedaan berikut:
+
+| `malloc()` | `calloc()` |
+| :--- | :--- |
+| Menerima ukuran total memori dalam byte | Menerima jumlah elemen dan ukuran setiap elemen |
+| Tidak menginisialisasi isi memori | Menginisialisasi seluruh byte menjadi nol |
+| `malloc(5 * sizeof(int))` | `calloc(5, sizeof(int))` |
+
+---
+
+### realloc()
+
+`realloc()` (*Reallocation*) digunakan untuk mengubah ukuran
+blok memori yang sebelumnya sudah dialokasikan menggunakan
+`malloc()` atau `calloc()`.
+
+Sebagai contoh, awalnya kita menyediakan ruang untuk tiga integer,
+kemudian ingin memperbesar kapasitasnya menjadi lima integer.
+
+Bentuk umum:
+
+```c
+pointer = realloc(pointer, ukuran_baru);
+```
+
+Contoh program:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int *arr = malloc(3 * sizeof(int));
+
+    if (arr == NULL) {
+        printf("Alokasi memori gagal.\n");
+        return 1;
+    }
+
+    arr[0] = 10;
+    arr[1] = 20;
+    arr[2] = 30;
+
+    int *temp = realloc(arr, 5 * sizeof(int));
+
+    if (temp == NULL) {
+        printf("Reallocation gagal.\n");
+        free(arr);
+        return 1;
+    }
+
+    arr = temp;
+
+    arr[3] = 40;
+    arr[4] = 50;
+
+    for (int i = 0; i < 5; i++) {
+        printf("%d ", arr[i]);
+    }
+
+    printf("\n");
+
+    free(arr);
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+10 20 30 40 50
+```
+
+Pada contoh tersebut:
+
+1. `malloc()` mengalokasikan ruang untuk tiga integer.
+2. Tiga elemen pertama diisi dengan nilai `10`, `20`, dan `30`.
+3. `realloc()` meminta perubahan ukuran agar dapat menampung lima integer.
+4. Dua elemen tambahan kemudian diisi dengan `40` dan `50`.
+
+Mengapa kita menggunakan pointer sementara `temp`?
+
+```c
+int *temp = realloc(arr, 5 * sizeof(int));
+```
+
+Jika `realloc()` gagal, fungsi tersebut mengembalikan `NULL`,
+sedangkan blok memori lama masih tetap dialokasikan.
+
+Dengan menyimpan hasilnya ke `temp`, kita tidak kehilangan alamat
+blok memori lama ketika proses reallocation gagal.
+
+Jika berhasil, alamat baru kemudian disimpan kembali ke `arr`:
+
+```c
+arr = temp;
+```
+
+:::warning
+`realloc()` tidak menjamin alamat memori tetap sama.
+
+Ketika proses reallocation berhasil, blok memori dapat berpindah
+ke lokasi lain. Karena itu, gunakan pointer hasil `realloc()`
+yang baru dan jangan lagi menggunakan alamat lama.
+
+Memori tambahan yang diperoleh ketika ukuran diperbesar juga tidak
+otomatis diinisialisasi.
+:::
+
+---
+
+### free()
+
+Setiap memori yang dialokasikan secara dinamis sebaiknya dilepaskan
+ketika sudah tidak diperlukan.
+
+Untuk melepaskan memori, kita menggunakan:
+
+```c
+free(pointer);
+```
+
+Contoh:
+
+```c
+int *arr = malloc(5 * sizeof(int));
+
+if (arr != NULL) {
+    // Gunakan memori arr
+
+    free(arr);
+    arr = NULL;
+}
+```
+
+Fungsi `free()` akan melepaskan blok memori yang sebelumnya
+dialokasikan secara dinamis.
+
+Setelah dilepaskan, pointer tersebut tidak boleh lagi digunakan
+untuk mengakses memori yang sudah dibebaskan.
+
+Mengatur pointer menjadi `NULL` setelah `free()` merupakan kebiasaan
+yang dapat membantu menghindari penggunaan pointer yang sudah tidak
+valid.
+
+:::info
+Ingat kembali hubungan fungsi alokasi memori:
+
+```text
+malloc()   → alokasikan memori
+calloc()   → alokasikan dan inisialisasi nol
+realloc()  → ubah ukuran alokasi
+free()     → lepaskan alokasi
+```
+
+Jangan lupa melepaskan memori yang sudah tidak digunakan untuk
+menghindari **memory leak**.
+:::
+
+---
+
+## Gambaran Memory Layout Program
+
+Untuk memahami hubungan pointer dan pengelolaan memori, kita juga
+perlu mengenal gambaran umum bagaimana ruang memori sebuah program C
+dibagi.
+
+Pada slide, terdapat beberapa bagian utama dalam ruang alamat
+(*address space*) program:
+
+```text
+Text / Code
+Static Data
+Heap
+Stack
+```
+
+Masing-masing bagian memiliki kegunaan yang berbeda.
+
+### 1. Text / Code Segment
+
+Bagian ini menyimpan instruksi program yang telah dikompilasi
+dan akan dijalankan oleh komputer.
+
+Secara sederhana, bagian ini berisi kode program.
+
+### 2. Static Data
+
+Bagian ini digunakan untuk menyimpan variabel global dan variabel
+yang memiliki penyimpanan statis.
+
+Contoh:
+
+```c
+int nilaiGlobal = 10;
+```
+
+Variabel tersebut dideklarasikan di luar function sehingga
+memiliki cakupan global.
+
+### 3. Stack
+
+**Stack** merupakan area memori yang umumnya digunakan untuk
+menyimpan data lokal dan informasi pemanggilan function.
+
+Contohnya:
+
+```c
+void contoh() {
+    int angka = 10;
+}
+```
+
+Variabel lokal `angka` memiliki masa hidup yang berkaitan dengan
+eksekusi function tersebut.
+
+### 4. Heap
+
+**Heap** merupakan area memori yang digunakan untuk alokasi memori
+dinamis.
+
+Memori yang diperoleh melalui:
+
+```c
+malloc()
+calloc()
+realloc()
+```
+
+berasal dari area ini.
+
+Memori tersebut perlu dilepaskan menggunakan:
+
+```c
+free()
+```
+
+### Perbedaan Stack dan Heap
+
+| Stack | Heap |
+| :--- | :--- |
+| Umumnya digunakan untuk data lokal dan informasi pemanggilan function | Digunakan untuk alokasi memori dinamis |
+| Pengelolaannya mengikuti alur pemanggilan dan pengembalian function | Dialokasikan dan dilepaskan melalui fungsi pengelolaan memori |
+| Masa hidup data lokal berkaitan dengan block atau function | Memori tetap dialokasikan sampai dilepaskan atau program berakhir |
+
+Secara konseptual, diagram pada slide menggambarkan stack dan heap
+berkembang ke arah yang berlawanan:
+
+```text
+Alamat Memori Lebih Tinggi
+        ┌───────────────┐
+        │     Stack     │
+        │       ↓       │
+        ├───────────────┤
+        │               │
+        │  Ruang Bebas  │
+        │               │
+        ├───────────────┤
+        │       ↑       │
+        │      Heap     │
+        ├───────────────┤
+        │  Static Data  │
+        ├───────────────┤
+        │   Text/Code   │
+        └───────────────┘
+Alamat Memori Lebih Rendah
+```
+
+:::info
+Diagram tersebut merupakan gambaran konseptual tata letak memori
+program, mengikuti ilustrasi arsitektur Intel 80x86 pada slide.
+
+Susunan dan arah pertumbuhan stack maupun heap dapat berbeda
+bergantung pada arsitektur, sistem operasi, dan implementasi compiler.
+Karena itu, diagram ini digunakan untuk memahami konsep, bukan
+sebagai aturan alamat memori yang selalu sama pada setiap komputer.
+:::
+
+---
+
+## Common Mistakes with Pointers
+
+Pointer memberikan akses yang lebih fleksibel terhadap memori.
+Namun, penggunaan yang tidak tepat dapat menyebabkan kesalahan
+pada program.
+
+Berikut beberapa kesalahan umum yang perlu kalian hindari.
+
+### 1. Uninitialized Pointer
+
+**Uninitialized Pointer** terjadi ketika pointer digunakan sebelum
+diberikan alamat yang valid.
+
+Contoh:
+
+```c
+int *ptr;
+
+*ptr = 10;
+```
+
+Pada kode tersebut, `ptr` belum diarahkan ke objek mana pun.
+
+Ketika kita mencoba:
+
+```c
+*ptr = 10;
+```
+
+program mencoba menulis ke lokasi memori yang tidak diketahui.
+
+Hal ini dapat menyebabkan perilaku yang tidak terdefinisi
+(*undefined behavior*).
+
+Solusinya adalah menginisialisasi pointer dengan alamat objek
+yang valid atau `NULL` sebelum digunakan.
+
+### 2. Dangling Pointer
+
+**Dangling Pointer** adalah pointer yang masih menyimpan alamat
+memori dari objek yang sudah tidak valid.
+
+Salah satu contohnya adalah menggunakan pointer setelah memori
+yang ditunjuknya dibebaskan menggunakan `free()`.
+
+Contoh yang harus dihindari:
+
+```c
+int *ptr = malloc(sizeof(int));
+
+if (ptr != NULL) {
+    *ptr = 10;
+
+    free(ptr);
+
+    // Jangan mengakses *ptr setelah free()
+}
+```
+
+Setelah `free(ptr)` dipanggil, memori tersebut sudah dilepaskan.
+Pointer `ptr` tidak boleh lagi digunakan untuk mengakses memori
+tersebut.
+
+Untuk mengurangi risiko, kita dapat melakukan:
+
+```c
+free(ptr);
+ptr = NULL;
+```
+
+### 3. Incorrect Dereferencing
+
+Kesalahan ini terjadi ketika kita melakukan dereferencing terhadap
+pointer yang tidak menunjuk ke objek yang valid.
+
+Contohnya:
+
+```c
+int *ptr = NULL;
+
+// Jangan lakukan ini:
+printf("%d\n", *ptr);
+```
+
+Null pointer tidak memiliki objek tujuan yang dapat diakses.
+
+Selain itu, kita juga tidak boleh mengakses alamat di luar batas
+objek atau array yang ditunjuk pointer.
+
+---
+
+## Best Practices with Pointers
+
+Agar penggunaan pointer lebih aman dan mudah dipahami, ada beberapa
+praktik yang sebaiknya diterapkan.
+
+1. **Inisialisasi pointer**
+
+   Gunakan alamat objek yang valid atau `NULL` ketika mendeklarasikan
+   pointer. Hindari menggunakan pointer yang belum diinisialisasi.
+
+2. **Periksa hasil alokasi memori**
+
+   Selalu periksa apakah `malloc()`, `calloc()`, atau `realloc()`
+   berhasil sebelum menggunakan memori yang diminta.
+
+3. **Lepaskan memori yang tidak lagi digunakan**
+
+   Gunakan `free()` untuk melepaskan memori yang dialokasikan
+   secara dinamis.
+
+4. **Hindari dereferencing pointer yang tidak valid**
+
+   Pastikan pointer menunjuk ke objek yang masih valid sebelum
+   mengakses nilainya.
+
+5. **Gunakan pointer ketika memang diperlukan**
+
+   Pointer sangat berguna, tetapi penggunaan yang tidak perlu
+   dapat membuat program menjadi lebih rumit untuk dibaca
+   dan dipelihara.
+
+---
+
+## Practice
+
+Setelah mempelajari pointer, sekarang saatnya mencoba menerapkan
+konsep tersebut ke dalam program sederhana.
+
+Latihan berikut merupakan pengembangan untuk kebutuhan praktikum
+berdasarkan topik yang telah dibahas pada materi ini.
+
+### Practice 1 — Mengenal Pointer
+
+Buat program yang memiliki sebuah variabel integer dengan nilai `25`.
+
+Kemudian:
+
+- Buat pointer yang menunjuk ke variabel tersebut.
+- Tampilkan nilai variabel secara langsung.
+- Tampilkan nilai variabel melalui pointer.
+
+Output yang diharapkan:
+
+```text
+Nilai variabel: 25
+Nilai melalui pointer: 25
+```
+
+### Practice 2 — Mengubah Nilai Melalui Pointer
+
+Buat program yang memiliki sebuah variabel `angka` dengan nilai awal
+`10`.
+
+Kemudian:
+
+- Buat pointer yang menunjuk ke `angka`.
+- Ubah nilai `angka` menjadi `50` melalui pointer.
+- Tampilkan nilai `angka` setelah perubahan.
+
+Output yang diharapkan:
+
+```text
+Nilai angka: 50
+```
+
+### Practice 3 — Mengakses Array dengan Pointer
+
+Diberikan sebuah array:
+
+```c
+int arr[5] = {10, 20, 30, 40, 50};
+```
+
+Buat sebuah pointer yang menunjuk ke elemen pertama array tersebut.
+
+Tampilkan seluruh elemen array menggunakan pointer arithmetic.
+
+Output yang diharapkan:
+
+```text
+10 20 30 40 50
+```
+
+### Practice 4 — Menukar Dua Nilai Menggunakan Pointer
+
+Buat sebuah function bernama `swap()` yang menerima dua pointer
+bertipe `int`.
+
+Function tersebut harus menukar nilai dari dua variabel integer
+yang dikirimkan melalui alamatnya.
+
+Contoh:
+
+```text
+Sebelum ditukar:
+a = 10
+b = 20
+
+Setelah ditukar:
+a = 20
+b = 10
+```
+
+### Practice 5 — Dynamic Memory Allocation
+
+Buat program yang menggunakan `malloc()` untuk menyediakan ruang
+memori bagi lima buah integer.
+
+Kemudian:
+
+- Periksa apakah alokasi memori berhasil.
+- Isi kelima elemen dengan nilai yang kalian tentukan.
+- Tampilkan seluruh elemen.
+- Lepaskan memori menggunakan `free()`.
+
+Pastikan tidak menggunakan pointer tersebut setelah memorinya
+dilepaskan.
+
+---
+
+## Ringkasan
+
+Pada materi ini kita telah mempelajari bahwa **pointer** adalah
+variabel yang menyimpan alamat memori dari variabel atau objek lain.
+
+Konsep utama yang telah kita pelajari:
+
+| Konsep | Kegunaan |
+| :--- | :--- |
+| Pointer | Menyimpan alamat memori |
+| `&` | Mengambil alamat suatu variabel |
+| `*` | Melakukan dereferencing untuk mengakses nilai yang ditunjuk |
+| `NULL` | Menandakan pointer tidak menunjuk ke objek |
+| Pointer dan Array | Mengakses elemen array melalui pointer |
+| Pointer Arithmetic | Berpindah antar elemen yang ditunjuk |
+| Pass by Value | Mengirim salinan nilai ke function |
+| Pointer pada Function | Memungkinkan function mengakses dan mengubah objek asli |
+| Double Pointer | Menyimpan alamat dari pointer lain |
+| `malloc()` | Mengalokasikan memori secara dinamis |
+| `calloc()` | Mengalokasikan memori dan menginisialisasi byte menjadi nol |
+| `realloc()` | Mengubah ukuran alokasi memori |
+| `free()` | Melepaskan memori yang dialokasikan secara dinamis |
+
+Pointer merupakan salah satu konsep penting dalam bahasa C karena
+memungkinkan kita mengakses alamat memori, mengelola alokasi memori,
+dan membangun struktur data yang lebih kompleks.
+
+Memahami pointer akan menjadi bekal penting sebelum mempelajari
+pengelolaan memori dan struktur data lebih lanjut.
