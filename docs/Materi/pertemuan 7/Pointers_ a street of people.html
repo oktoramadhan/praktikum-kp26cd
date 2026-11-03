@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pointers: a street of people</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eaf2f4;--ink:#1d2b36;--ground:#2c3e4c;--card:#ffffff;--yellow:#f6c026;--ptr:#c2255c;--muted:#5b6b78;--code:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14212b;--ink:#e8f0f4;--ground:#0b1319;--card:#26343f;--muted:#9fb1bd;--code:#1b2933}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Fredoka",system-ui,sans-serif;display:flex;justify-content:center}
+main{width:100%;max-width:960px;padding:20px 16px 28px}
+h1{font-size:clamp(22px,4vw,32px);margin:0 0 12px;font-weight:600}
+svg{width:100%;height:auto;display:block;border-radius:18px;background:linear-gradient(#bfe0ee,#e9f4f8 70%)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) svg{background:linear-gradient(#1c3a4f,#2a4a5c 70%)}}
+.house rect.wall{transition:filter .4s,stroke-width .4s;stroke:transparent;stroke-width:0}
+.house.hl rect.wall{stroke:var(--ptr);stroke-width:5}
+.badge rect{fill:var(--card);transition:fill .4s}
+.badge text{fill:var(--ink);font-size:21px;font-weight:600;text-anchor:middle;font-family:inherit}
+.badge.ptr rect{fill:var(--yellow)}
+.badge.ptr text{fill:#1d2b36}
+.badge.nul rect{fill:#9aa5ad}
+.badge.nul text{fill:#fff}
+.badge{transform-box:fill-box;transform-origin:center}
+.badge.pop{animation:pop .6s}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+.bob{animation:bob 2.6s ease-in-out infinite;transform-box:fill-box}
+@keyframes bob{50%{transform:translateY(-3px)}}
+#arrow{fill:none;stroke:var(--ptr);stroke-width:5;stroke-linecap:round;stroke-dasharray:700;stroke-dashoffset:700;transition:stroke-dashoffset 1.2s ease}
+#arrow.on{stroke-dashoffset:0}
+#head{fill:var(--ptr);opacity:0;transition:opacity .3s}
+#head.on{opacity:1;transition-delay:1s}
+#arm{opacity:0;transition:opacity .4s}
+#arm.on{opacity:1}
+#say{opacity:0;transition:opacity .4s}
+#say.on{opacity:1}
+#say rect{fill:var(--card);stroke:var(--ptr);stroke-width:3}
+#say text{fill:var(--ink);font-size:22px;font-weight:600;text-anchor:middle;font-family:inherit}
+.lab{fill:#eaf2f4;text-anchor:middle;font-family:inherit}
+.panel{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;margin-top:16px;align-items:start}
+@media(max-width:640px){.panel{grid-template-columns:1fr}}
+h2{margin:0 0 6px;font-size:clamp(20px,3.4vw,26px);font-weight:600}
+#txt{margin:0;font-size:clamp(16px,2.6vw,19px);line-height:1.5;color:var(--muted)}
+pre{margin:0;background:var(--code);border-radius:12px;padding:14px 16px;font:600 clamp(15px,2.6vw,18px) ui-monospace,Menlo,Consolas,monospace;border-left:6px solid var(--ptr);overflow-x:auto;color:var(--ink)}
+.ctl{display:flex;align-items:center;gap:10px;margin-top:16px}
+button{font:inherit;font-weight:600;border:0;border-radius:999px;padding:9px 18px;background:var(--ink);color:var(--bg);cursor:pointer;min-height:44px}
+button:focus-visible{outline:3px solid var(--ptr);outline-offset:2px}
+.dots{display:flex;gap:8px;margin-left:auto}
+.dots button{padding:0;width:44px;height:44px;background:transparent;display:grid;place-items:center}
+.dots i{display:block;width:14px;height:14px;border-radius:50%;background:var(--muted);opacity:.4;transition:all .3s}
+.dots button.on i{opacity:1;background:var(--ptr);transform:scale(1.3)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<h1>Pointers, explained with a street of people</h1>
+<svg id="stage" viewBox="0 0 900 420" role="img" aria-label="Animation of five people in houses, one holding the address of another"></svg>
+<div class="panel">
+  <div><h2 id="ttl"></h2><p id="txt"></p></div>
+  <pre id="code" aria-live="polite"></pre>
+</div>
+<div class="ctl">
+  <button id="play" type="button">Pause</button>
+  <button id="prev" type="button">Back</button>
+  <button id="next" type="button">Next</button>
+  <div class="dots" id="dots"></div>
+</div>
+</main>
+<script>
+var P=[["Leo",100,7],["Mia",104,42],["Ana",108,19],["Sam",112,8],["Raj",116,3]];
+var HC=["#f7c6c0","#bfe3c8","#fbe3a1","#c7d5f2","#e3cdee"];
+var SH=["#3a86a8","#c2255c","#6a994e","#7b5ea7","#e09f3e"];
+var SK=["#f1c27d","#8d5524","#e0ac69","#c68642","#ffdbac"];
+var s='<rect y="360" width="900" height="60" fill="var(--ground)"/>';
+P.forEach(function(p,i){
+  var x=40+i*170,cx=x+70;
+  s+='<g class="house" id="h'+i+'"><polygon points="'+(x-8)+',190 '+cx+',130 '+(x+148)+',190" fill="#8a5a44"/>'
+   +'<rect class="wall" x="'+x+'" y="190" width="140" height="170" fill="'+HC[i]+'"/>'
+   +'<g class="bob" style="animation-delay:'+(i*0.4)+'s"><circle cx="'+cx+'" cy="292" r="17" fill="'+SK[i]+'"/>'
+   +'<rect x="'+(cx-20)+'" y="311" width="40" height="60" rx="16" fill="'+SH[i]+'"/></g>'
+   +'<g class="badge" id="b'+i+'"><rect x="'+(cx-36)+'" y="215" width="72" height="40" rx="12"/><text x="'+cx+'" y="243"></text></g></g>'
+   +'<text class="lab" x="'+cx+'" y="388" font-size="20" font-weight="600">'+p[1]+'</text>'
+   +'<text class="lab" x="'+cx+'" y="409" font-size="14" opacity=".75">'+p[0]+'</text>';
+});
+s+='<line id="arm" x1="595" y1="325" x2="560" y2="298" stroke="'+SH[3]+'" stroke-width="9" stroke-linecap="round"/>'
+ +'<path id="arrow" d="M620 205 C620 70 280 70 280 182"/>'
+ +'<polygon id="head" points="268,172 292,172 280,194"/>'
+ +'<g id="say"><rect x="365" y="60" width="170" height="44" rx="14"/><text x="450" y="90"></text></g>';
+document.getElementById("stage").innerHTML=s;
+var $=function(id){return document.getElementById(id)};
+function badge(i,t,c){var b=$("b"+i);b.setAttribute("class","badge "+(c||""));b.querySelector("text").textContent=t}
+function pop(i){var b=$("b"+i);b.classList.remove("pop");void b.getBoundingClientRect();b.classList.add("pop")}
+function say(t){var g=$("say");g.querySelector("text").textContent=t||"";g.classList.toggle("on",!!t)}
+function base(){P.forEach(function(p,i){badge(i,p[2])});badge(1,"42");badge(3,"8");
+  $("arrow").classList.remove("on");$("head").classList.remove("on");$("arm").classList.remove("on");
+  $("h1").classList.remove("hl");$("h3").classList.remove("hl");say("")}
+var S=[
+ {t:"Memory is a street",x:"Your computer’s memory is a long street of houses. Every house has an address, and each person inside holds one value.",c:"// houses 100, 104, 108 ...\n// each holds a value",f:function(){}},
+ {t:"A variable is a person",x:"Mia lives at address 104 and holds the number 42. That is all a variable is: a value that lives at an address.",c:"int x = 42;\n// x lives at 104",f:function(){$("h1").classList.add("hl");pop(1)}},
+ {t:"A pointer holds an address",x:"Sam does not hold a number. He holds a card with Mia’s address on it. That card is a pointer. It points at Mia without being her.",c:"int *p = &x;\n// p holds 104",f:function(){badge(3,"104","ptr");pop(3);$("arm").classList.add("on");$("arrow").classList.add("on");$("head").classList.add("on");$("h1").classList.add("hl")}},
+ {t:"Follow the address",x:"To get Mia’s value, Sam walks to the address on his card and looks inside. Following a pointer is called dereferencing.",c:"printf(\"%d\", *p);\n// prints 42",f:function(){badge(3,"104","ptr");$("arm").classList.add("on");$("arrow").classList.add("on");$("head").classList.add("on");$("h1").classList.add("hl");say("*p is 42");pop(1)}},
+ {t:"Change it through the pointer",x:"Sam can also write at that address. Mia’s value changes, and everyone who reads from 104 now sees 99.",c:"*p = 99;\n// x is now 99",f:function(){badge(3,"104","ptr");badge(1,"99");pop(1);$("arm").classList.add("on");$("arrow").classList.add("on");$("head").classList.add("on");$("h1").classList.add("hl");say("*p = 99")}},
+ {t:"A pointer to nowhere",x:"A blank card is a null pointer. Sam has no address to visit, so asking him for a value would send him nowhere. Check before you follow.",c:"p = NULL;\nif (p != NULL) { ... }",f:function(){badge(3,"NULL","nul");say("no address yet")}}
+];
+var cur=0,playing=true,tm;
+var dots=$("dots");
+S.forEach(function(_,i){var b=document.createElement("button");b.type="button";b.setAttribute("aria-label","Scene "+(i+1));b.innerHTML="<i></i>";b.onclick=function(){go(i)};dots.appendChild(b)});
+function go(i){
+  cur=(i+S.length)%S.length;base();S[cur].f();
+  $("ttl").textContent=S[cur].t;$("txt").textContent=S[cur].x;$("code").textContent=S[cur].c;
+  [].forEach.call(dots.children,function(d,k){d.classList.toggle("on",k===cur)});
+  clearTimeout(tm);if(playing)tm=setTimeout(function(){go(cur+1)},6500);
+}
+$("play").onclick=function(){playing=!playing;this.textContent=playing?"Pause":"Play";go(cur)};
+$("prev").onclick=function(){go(cur-1)};
+$("next").onclick=function(){go(cur+1)};
+go(0);
+</script>
+</body>
+</html>
