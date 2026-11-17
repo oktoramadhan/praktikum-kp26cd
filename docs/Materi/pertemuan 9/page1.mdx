@@ -1,0 +1,1395 @@
+---
+title: Structures in C
+description: Pengenalan struct dalam bahasa C melalui satu case berkelanjutan
+sidebar_position: 1
+---
+
+import CodeBlock from "@theme/CodeBlock";
+import Kode01 from "!!raw-loader!@site/docs/Materi/pertemuan 9/kode/01_struct_dasar.c";
+import Kode02 from "!!raw-loader!@site/docs/Materi/pertemuan 9/kode/02_typedef_array.c";
+import Kode03 from "!!raw-loader!@site/docs/Materi/pertemuan 9/kode/03_nested_struct.c";
+import Kode04 from "!!raw-loader!@site/docs/Materi/pertemuan 9/kode/04_pointer_function.c";
+import Kode05 from "!!raw-loader!@site/docs/Materi/pertemuan 9/kode/05_studi_kasus_nilai.c";
+
+Pada materi-materi sebelumnya, kita telah mempelajari variabel, array, function,
+pointer, dan string.
+
+Sejauh ini, satu variabel atau array hanya dapat menyimpan data dengan **satu
+tipe data**. Array `int nilai[5]` hanya berisi `int`, sedangkan `char nama[50]`
+hanya berisi karakter.
+
+Padahal data di dunia nyata sering terdiri dari beberapa informasi dengan tipe
+yang **berbeda-beda**. Data seorang mahasiswa, misalnya:
+
+- Nama → berupa teks (`char[]`)
+- NIM → berupa teks (`char[]`)
+- IPK → berupa bilangan desimal (`float`)
+
+Untuk mengelompokkan data yang saling berkaitan ini menjadi satu kesatuan, bahasa
+C menyediakan **struct** (_structure_).
+
+---
+
+## Tujuan Praktikum
+
+Setelah menyelesaikan praktikum ini, kalian diharapkan mampu:
+
+- Memahami pengertian dan manfaat struct.
+- Mendefinisikan struct, membuat variabel struct, dan mengakses member dengan dot operator (`.`).
+- Melakukan inisialisasi dan input data ke dalam struct.
+- Menggunakan `typedef` untuk menyederhanakan penulisan struct.
+- Menggunakan array of struct dan nested struct.
+- Menggunakan pointer to struct dan arrow operator (`->`).
+- Mengirim struct ke function, baik _by value_ maupun melalui pointer.
+- Menyelesaikan permasalahan sederhana menggunakan struct.
+
+---
+
+## Alur Belajar: Case "Sistem Data Mahasiswa"
+
+Agar mudah dipahami, seluruh materi ini mengikuti **satu cerita**. Bayangkan
+kalian diminta membuat program untuk mengelola data mahasiswa di sebuah kelas.
+Di setiap tahap akan muncul satu masalah baru, dan struct menjadi jawabannya.
+
+| Tahap | Masalah yang kalian hadapi                          | Konsep yang dipelajari                     |
+| ----- | --------------------------------------------------- | ------------------------------------------ |
+| 1     | Data satu mahasiswa tersebar di banyak variabel     | `struct`, dot operator, inisialisasi       |
+| 2     | Mahasiswanya banyak, bukan hanya satu               | `typedef`, array of struct                 |
+| 3     | Perlu menyimpan tanggal lahir                       | Nested struct                              |
+| 4     | IPK salah input dan ingin diperbaiki lewat function | Pointer to struct, `->`, struct & function |
+| 5     | Ingin membuat program nilai yang utuh               | Gabungan semua konsep (studi kasus)        |
+
+:::tip
+
+Setiap tahap memiliki program lengkap yang bisa kalian salin dan jalankan. Cara
+compile-nya:
+
+```bash
+gcc nama_file.c -o nama_file
+./nama_file
+```
+
+Jangan hanya dibaca. Ketik ulang dan ubah-ubah kodenya untuk melihat apa yang
+terjadi.
+
+:::
+
+---
+
+## Tahap 1: Mengenal Struct
+
+### Mengapa Butuh Struct?
+
+Misalkan kita ingin menyimpan data dua orang mahasiswa. Dengan pengetahuan yang
+kita miliki sekarang, kita mungkin akan menulis seperti ini:
+
+```c
+char nama1[50] = "Budi Santoso";
+char nim1[15] = "2600001";
+float ipk1 = 3.75;
+
+char nama2[50] = "Siti Aminah";
+char nim2[15] = "2600002";
+float ipk2 = 3.90;
+```
+
+Untuk 2 mahasiswa masih bisa. Bagaimana jika 100 mahasiswa? Kita harus membuat
+**300 variabel**!
+
+Kalian mungkin berpikir untuk memakai array:
+
+```c
+char nama[100][50];
+char nim[100][15];
+float ipk[100];
+```
+
+Cara ini lebih baik, tetapi data seorang mahasiswa masih **tersebar** di tiga
+array berbeda. Kita harus selalu ingat bahwa `nama[5]`, `nim[5]`, dan `ipk[5]`
+milik mahasiswa yang sama. Jika salah menukar urutan satu array saja, data
+mahasiswa akan tertukar.
+
+Dengan struct, seluruh informasi satu mahasiswa dikumpulkan dalam **satu
+variabel**:
+
+```c
+struct Mahasiswa mhs1;   // mhs1 memiliki nama, nim, dan ipk sekaligus
+```
+
+### Apa itu Struct?
+
+**Struct adalah tipe data buatan (_user-defined data type_) yang digunakan untuk
+mengelompokkan beberapa variabel, yang dapat memiliki tipe data berbeda, ke
+dalam satu nama.**
+
+Setiap variabel di dalam struct disebut **member** (atau _field_).
+
+Biar gampang, bayangkan struct seperti **Kartu Tanda Mahasiswa (KTM)**. Setiap
+KTM memiliki format yang sama: ada kolom nama, NIM, dan IPK. Format kartu itu
+adalah **struct**-nya, sedangkan kartu milik Budi atau kartu milik Siti adalah
+**variabel**-nya.
+
+```text
+Struct (format kartu)          Variabel (kartu yang sudah diisi)
+
+┌─────────────────────┐        ┌─────────────────────┐
+│ Nama : ____________ │        │ Nama : Budi Santoso │
+│ NIM  : ____________ │  ───►  │ NIM  : 2600001      │
+│ IPK  : ____________ │        │ IPK  : 3.75         │
+└─────────────────────┘        └─────────────────────┘
+```
+
+Jika pada Week 1 variabel diibaratkan sebagai sebuah kotak, maka struct adalah
+**kotak besar yang di dalamnya terdapat beberapa kotak kecil** dengan ukuran
+yang bisa berbeda-beda.
+
+### Mendefinisikan Struct
+
+Kita menggunakan keyword `struct` dengan sintaks dasar berikut:
+
+```c
+struct StructName {
+    dataType member1;
+    dataType member2;
+    // ...
+};
+```
+
+Contoh:
+
+```c
+struct Mahasiswa {
+    char nama[50];   // member pertama, bertipe string
+    char nim[15];    // member kedua, bertipe string
+    float ipk;       // member ketiga, bertipe float
+};                   // WAJIB diakhiri titik koma
+```
+
+Nama struct (disebut _tag_) ditulis dengan **PascalCase**, misalnya `Mahasiswa`,
+`DataBuku`, atau `TitikKoordinat`.
+
+Definisi struct biasanya diletakkan **di luar dan sebelum** `main()`, agar dapat
+digunakan oleh `main()` maupun function lain di dalam program.
+
+:::warning
+
+Definisi struct **wajib diakhiri dengan tanda titik koma (`;`)** setelah kurung
+kurawal penutup. Lupa titik koma adalah salah satu kesalahan yang paling sering
+terjadi dan dapat menyebabkan pesan _error_ yang membingungkan.
+
+:::
+
+:::info
+
+Mendefinisikan struct **belum membuat variabel apa pun** dan belum memesan
+memori. Definisi struct hanyalah **cetakan** (_blueprint_) yang memberi tahu
+compiler seperti apa bentuk datanya. Memori baru dipesan ketika kita membuat
+variabel dari struct tersebut.
+
+:::
+
+### Membuat Variabel dan Mengakses Member
+
+Setelah struct didefinisikan, kita membuat variabel dengan sintaks:
+
+```c
+struct Mahasiswa mhs1;
+struct Mahasiswa mhs2;
+```
+
+`mhs1` dan `mhs2` masing-masing memiliki member `nama`, `nim`, dan `ipk`
+**sendiri-sendiri**. Selama belum diisi, member masih berisi _garbage value_.
+
+Untuk mengakses member, gunakan **dot operator** (`.`):
+
+```c
+variableName.memberName
+```
+
+```c
+mhs1.ipk = 3.75;
+printf("%.2f\n", mhs1.ipk);
+```
+
+Setiap member diperlakukan **sama persis seperti variabel biasa** sesuai tipe
+datanya. `mhs1.ipk` diperlakukan seperti `float`, sedangkan `mhs1.nama`
+diperlakukan seperti string (array of char).
+
+:::warning
+
+Member string **tidak bisa** diisi dengan tanda `=` seperti ini:
+
+```c
+mhs1.nama = "Budi Santoso";   // ERROR!
+```
+
+Seperti yang sudah kita pelajari pada materi String, array tidak dapat diisi
+ulang menggunakan assignment. Gunakan `strcpy()` dari `string.h`:
+
+```c
+strcpy(mhs1.nama, "Budi Santoso");   // BENAR
+```
+
+:::
+
+### Inisialisasi Struct
+
+Selain mengisi member satu per satu, kita dapat memberi nilai awal saat
+deklarasi, mirip inisialisasi array dengan `{}`.
+
+**1. Berdasarkan urutan member**
+
+Nilai di dalam `{}` diberikan ke member sesuai urutan pada definisi struct:
+
+```c
+struct Mahasiswa mhs1 = {"Budi Santoso", "2600001", 3.75};
+```
+
+```text
+"Budi Santoso"  → nama  (member ke-1)
+"2600001"       → nim   (member ke-2)
+3.75            → ipk   (member ke-3)
+```
+
+**2. Designated initializer (C99)**
+
+Sebutkan nama member langsung dengan format `.memberName = value`. Urutan
+penulisan **bebas** dan kode lebih mudah dibaca:
+
+```c
+struct Mahasiswa mhs2 = {.ipk = 3.90, .nama = "Siti Aminah", .nim = "2600002"};
+```
+
+**3. Mengisi seluruh member dengan nol**
+
+Member yang tidak diberi nilai akan **otomatis bernilai 0** (untuk string berarti
+string kosong). Karena itu kita bisa menulis:
+
+```c
+struct Mahasiswa mhs3 = {0};
+```
+
+:::note
+
+Menulis string dengan `"..."` hanya diperbolehkan **saat inisialisasi**. Jika
+variabel struct sudah dibuat sebelumnya, gunakan `strcpy()`.
+
+:::
+
+### Input Data ke dalam Struct
+
+Kita juga dapat meminta pengguna mengisi struct dengan `scanf()`. Aturannya sama
+seperti variabel biasa:
+
+- Member bertipe angka (`int`, `float`, `double`, `char`) **memerlukan** `&`.
+- Member bertipe string (array of char) **tidak memerlukan** `&`.
+
+```c
+struct Mahasiswa mhs;
+
+printf("Masukkan nama : ");
+scanf(" %49[^\n]", mhs.nama);   // nama boleh mengandung spasi
+
+printf("Masukkan NIM  : ");
+scanf("%14s", mhs.nim);
+
+printf("Masukkan IPK  : ");
+scanf("%f", &mhs.ipk);
+```
+
+Mari perhatikan baris pentingnya:
+
+- `[^\n]` adalah **scanset** yang sudah kita pelajari pada materi String. Ia membaca semua karakter sampai bertemu _newline_, sehingga nama yang mengandung spasi tetap terbaca utuh.
+- Angka `49` membatasi jumlah karakter agar tidak melebihi `nama[50]` (1 tempat disisakan untuk `\0`).
+- Spasi sebelum `%` berfungsi **melewati** sisa _whitespace_ (termasuk `\n` dari tombol Enter sebelumnya).
+- `&mhs.ipk` dibaca sebagai `&(mhs.ipk)`, yaitu **alamat dari member `ipk`**, karena operator `.` berprioritas lebih tinggi daripada `&`.
+
+### Menyalin dan Membandingkan Struct
+
+Berbeda dengan array, variabel struct **dapat disalin** ke variabel struct lain
+bertipe sama menggunakan `=`. Seluruh member, **termasuk array di dalamnya**,
+ikut disalin sebagai salinan yang benar-benar terpisah:
+
+```c
+struct Mahasiswa cadangan = mhs1;   // salinan independen
+mhs1.ipk = 4.00;                    // cadangan.ipk tidak ikut berubah
+```
+
+Namun, struct **tidak dapat dibandingkan** secara langsung dengan `==` atau `!=`:
+
+```c
+if (a == b) { }   // ERROR! Struct tidak bisa dibandingkan langsung
+```
+
+Bandingkan **member satu per satu**:
+
+```c
+if (a.x == b.x && a.y == b.y) { ... }      // member angka
+if (strcmp(a.nim, b.nim) == 0) { ... }     // member string
+```
+
+### Program Lengkap Tahap 1
+
+<CodeBlock language="c" title="01_struct_dasar.c" showLineNumbers>
+    {Kode01}
+</CodeBlock>
+
+<a
+    href={`data:text/plain;charset=utf-8,${encodeURIComponent(Kode01)}`}
+    download="01_struct_dasar.c"
+>
+    ⬇ Unduh 01_struct_dasar.c
+</a>
+
+**Output di terminal:**
+
+```text
+=== Data Mahasiswa ===
+1. Budi Santoso | 2600001 | 3.75
+2. Siti Aminah | 2600002 | 3.90
+3. Andi Wijaya | 2600003 | 3.40
+
+=== Salinan struct ===
+mhs1     : 4.00
+cadangan : 3.75 (tidak ikut berubah)
+```
+
+Perhatikan bahwa setelah `mhs1.ipk` diubah menjadi `4.00`, nilai `cadangan.ipk`
+tetap `3.75`. Itu membuktikan `cadangan` adalah salinan yang terpisah di memori.
+
+:::tip Cek pemahaman
+
+Jika `struct Mahasiswa salinan = mhs1;` lalu `mhs1.ipk` diubah, apakah IPK pada
+`salinan` ikut berubah? **Tidak.** Assignment menyalin seluruh nilai member ke
+struct lain.
+
+:::
+
+---
+
+## Tahap 2: typedef dan Array of Struct
+
+Kelas yang kalian kelola ternyata berisi banyak mahasiswa, dan menulis `struct
+Mahasiswa` berulang kali terasa panjang. Dua alat berikut akan membantu:
+`typedef` dan array of struct.
+
+### typedef
+
+Keyword **`typedef`** memberikan **nama alias** pada sebuah tipe data:
+
+```c
+typedef existingType newName;
+```
+
+Contoh sederhana:
+
+```c
+typedef float Nilai;
+
+Nilai uts = 85.5;   // sama dengan: float uts = 85.5;
+```
+
+`typedef` paling sering digunakan bersama struct. Ada dua cara penulisan:
+
+**Cara 1: Tanpa nama tag**
+
+```c
+typedef struct {
+    char nama[50];
+    char nim[15];
+    float ipk;
+} Mahasiswa;
+```
+
+**Cara 2: Dengan nama tag**
+
+```c
+typedef struct Mahasiswa {
+    char nama[50];
+    char nim[15];
+    float ipk;
+} Mahasiswa;
+```
+
+Dengan kedua cara tersebut, kita cukup menulis `Mahasiswa` tanpa keyword
+`struct`:
+
+| Tanpa `typedef`                | Dengan `typedef`        |
+| ------------------------------ | ----------------------- |
+| `struct Mahasiswa mhs1;`       | `Mahasiswa mhs1;`       |
+| `struct Mahasiswa daftar[10];` | `Mahasiswa daftar[10];` |
+| `struct Mahasiswa *ptr;`       | `Mahasiswa *ptr;`       |
+
+:::tip
+
+Mulai dari bagian ini, contoh program menggunakan `typedef` agar kode lebih
+ringkas. Ingat bahwa `typedef` **tidak membuat tipe data baru**, ia hanya
+memberi nama lain untuk tipe yang sudah ada.
+
+Pada beberapa kasus, misalnya struct yang memiliki member berupa pointer ke
+tipe dirinya sendiri, nama tag (Cara 2) tetap diperlukan.
+
+:::
+
+### Array of Struct
+
+Untuk menyimpan **banyak mahasiswa**, gabungkan array dan struct. Sintaksnya
+sama seperti array biasa:
+
+```c
+Mahasiswa daftar[3];
+```
+
+Baris ini membuat array `daftar` berisi **3 struct** `Mahasiswa`. Setiap elemen
+memiliki `nama`, `nim`, dan `ipk` sendiri.
+
+```text
+daftar
+┌─────────────────┬─────────────────┬─────────────────┐
+│    daftar[0]    │    daftar[1]    │    daftar[2]    │
+├─────────────────┼─────────────────┼─────────────────┤
+│ nama: "Budi"    │ nama: "Siti"    │ nama: "Andi"    │
+│ nim : "2600001" │ nim : "2600002" │ nim : "2600003" │
+│ ipk : 3.75      │ ipk : 3.90      │ ipk : 3.40      │
+└─────────────────┴─────────────────┴─────────────────┘
+```
+
+Untuk mengakses member sebuah elemen, gabungkan **indexing** dan **dot operator**:
+
+```c
+daftar[1].nama   // nama mahasiswa pada indeks 1 → "Siti"
+daftar[2].ipk    // ipk mahasiswa pada indeks 2  → 3.40
+```
+
+### Program Lengkap Tahap 2
+
+Program berikut menampilkan tabel, menghitung rata-rata IPK, dan mencari
+mahasiswa ber-IPK tertinggi.
+
+<CodeBlock language="c" title="02_typedef_array.c" showLineNumbers>
+    {Kode02}
+</CodeBlock>
+
+<a
+    href={`data:text/plain;charset=utf-8,${encodeURIComponent(Kode02)}`}
+    download="02_typedef_array.c"
+>
+    ⬇ Unduh 02_typedef_array.c
+</a>
+
+**Output di terminal:**
+
+```text
+No  Nama      NIM       IPK
+--------------------------
+1   Budi      2600001   3.75
+2   Siti      2600002   3.90
+3   Andi      2600003   3.40
+4   Dewi      2600004   3.55
+
+Rata-rata IPK : 3.65
+IPK tertinggi : Siti (3.90)
+```
+
+Beberapa hal yang perlu diperhatikan:
+
+- Pada `%-10s`, angka `10` menentukan **lebar minimal** kolom, dan tanda `-` membuat teks **rata kiri**. Tanpa tanda `-`, teks akan rata kanan. Dengan cara ini data tampil rapi seperti tabel.
+- `JUMLAH` adalah **konstanta** yang dibuat dengan preprocessor directive `#define`. Sesuai _naming convention_, konstanta ditulis dengan `SCREAMING_SNAKE_CASE`.
+- Pada langkah 3, yang disimpan adalah **indeks** mahasiswa terbaik, bukan hanya nilainya. Dengan indeks, kita bisa mengakses seluruh datanya (nama, NIM, dan IPK).
+
+:::tip Cek pemahaman
+
+Apa ekspresi untuk mengakses IPK mahasiswa kedua pada array `daftar`? Jawabannya
+`daftar[1].ipk`, karena indeks array dimulai dari `0`.
+
+:::
+
+:::warning
+
+Jika jumlah data berasal dari input pengguna, kalian **wajib memeriksa** apakah
+jumlahnya melebihi kapasitas array. Jika tidak, program akan menulis data di
+luar batas array. Kita akan menambahkan validasi ini pada Tahap 5.
+
+:::
+
+---
+
+## Tahap 3: Nested Struct
+
+Sekarang data mahasiswa perlu ditambah **tanggal lahir**. Tanggal terdiri dari
+hari, bulan, dan tahun, sehingga lebih rapi jika dibuat sebagai struct
+tersendiri. Member dari sebuah struct boleh berupa **struct lain**, dan ini
+disebut **nested struct**.
+
+```c
+typedef struct {
+    int hari;
+    int bulan;
+    int tahun;
+} Tanggal;
+
+typedef struct {
+    char nama[50];
+    char nim[15];
+    Tanggal tanggalLahir;   // struct di dalam struct
+    float ipk;
+} Mahasiswa;
+```
+
+:::note
+
+Struct `Tanggal` harus didefinisikan **sebelum** struct `Mahasiswa`, karena
+compiler perlu mengetahui bentuk `Tanggal` terlebih dahulu sebelum digunakan
+sebagai member.
+
+:::
+
+Untuk mengakses member dari nested struct, gunakan dot operator **secara
+bertingkat**:
+
+```text
+mhs.tanggalLahir.tahun
+│   │            │
+│   │            └── member "tahun" milik tanggalLahir
+│   └── member "tanggalLahir" milik mhs (bertipe Tanggal)
+└── variabel bertipe Mahasiswa
+```
+
+### Program Lengkap Tahap 3
+
+<CodeBlock language="c" title="03_nested_struct.c" showLineNumbers>
+    {Kode03}
+</CodeBlock>
+
+<a
+    href={`data:text/plain;charset=utf-8,${encodeURIComponent(Kode03)}`}
+    download="03_nested_struct.c"
+>
+    ⬇ Unduh 03_nested_struct.c
+</a>
+
+**Output di terminal:**
+
+```text
+Nama          : Budi Santoso
+Tanggal lahir : 17-08-2007
+Tahun lahir dikoreksi menjadi: 2006
+
+Nama           Lahir       IPK
+Siti Aminah    03-12-2006  3.90
+Andi Wijaya    25-01-2007  3.40
+```
+
+Perhatikan inisialisasi `{17, 8, 2007}` yang berada di dalam `{}` utama. Nilai
+tersebut diberikan kepada member `tanggalLahir`. Format `%02d` membuat angka
+ditampilkan **minimal 2 digit** dengan tambahan angka 0 di depan (misalnya `8`
+menjadi `08`).
+
+:::tip Cek pemahaman
+
+Bagaimana mengakses tahun lahir mahasiswa pada variabel `mhs`? Gunakan
+`mhs.tanggalLahir.tahun`: mulai dari variabel, lalu member bertingkatnya.
+
+:::
+
+---
+
+## Tahap 4: Pointer to Struct dan Function
+
+Kalian menyadari bahwa IPK Budi salah diinput dan ingin memperbaikinya lewat
+sebuah function. Di sinilah pointer menjadi penting.
+
+### Pointer to Struct
+
+Pada Week 5 dan Week 7, kita telah mempelajari bahwa pointer adalah variabel
+yang menyimpan alamat variabel lain. Pointer juga dapat menunjuk ke variabel
+bertipe struct:
+
+```c
+Mahasiswa budi = {"Budi", "2600001", 3.75};
+Mahasiswa *ptr = &budi;   // ptr menyimpan alamat budi
+```
+
+```text
+   ptr                       budi
+┌──────────┐       ┌──────────────────┐
+│ &budi  ──┼──────►│ nama : "Budi"    │
+└──────────┘       │ ipk  : 3.75      │
+                   └──────────────────┘
+```
+
+### Mengakses Member melalui Pointer
+
+Kita bisa melakukan _dereference_ terlebih dahulu, lalu memakai dot operator:
+
+```c
+(*ptr).ipk
+```
+
+Tanda kurung **wajib** ditulis. Karena operator `.` berprioritas lebih tinggi
+daripada `*`, tanpa kurung `*ptr.ipk` akan dibaca sebagai `*(ptr.ipk)`, dan ini
+menyebabkan _error_ karena `ptr` bukan struct.
+
+### Arrow Operator (`->`)
+
+Karena `(*ptr).ipk` cukup merepotkan, C menyediakan **arrow operator** (`->`)
+sebagai cara singkatnya:
+
+```c
+ptr->ipk    // sama persis dengan (*ptr).ipk
+```
+
+:::tip
+
+Cara mudah mengingat kapan memakai `.` dan kapan memakai `->`:
+
+- Jika yang kalian pegang adalah **variabel struct** → gunakan `.`
+  (contoh: `budi.ipk`)
+- Jika yang kalian pegang adalah **pointer ke struct** → gunakan `->`
+  (contoh: `ptr->ipk`)
+
+:::
+
+### Mengirim Struct ke Function
+
+Struct dapat dijadikan parameter maupun _return type_ sebuah function.
+
+**By value**: function menerima **salinan** seluruh struct, sama seperti
+argument lain yang dikirim _by value_ (Week 6).
+
+```c
+void perbaikiIpkByValue(Mahasiswa mhs, float ipkBaru) {
+    mhs.ipk = ipkBaru;     // hanya mengubah salinan
+}
+```
+
+**By pointer**: function menerima **alamat** struct, sehingga dapat mengubah data
+milik pemanggil.
+
+```c
+void perbaikiIpkByPointer(Mahasiswa *mhs, float ipkBaru) {
+    mhs->ipk = ipkBaru;    // mengubah data asli
+}
+```
+
+```text
+By value                          By pointer
+
+budi ──(disalin)──► mhs           budi ◄──(alamat)── mhs
+  │                  │              ▲
+  │                  └─ diubah      └─ diubah langsung melalui mhs->ipk
+  └─ tetap 3.07
+```
+
+### Returning Struct dan `const`
+
+Function juga dapat **mengembalikan** sebuah struct. Hal ini berguna untuk
+"merakit" sebuah data:
+
+```c
+Mahasiswa buatMahasiswa(const char *nama, const char *nim, float ipk) {
+    Mahasiswa mhs;
+    strcpy(mhs.nama, nama);
+    strcpy(mhs.nim, nim);
+    mhs.ipk = ipk;
+    return mhs;
+}
+
+void tampilkan(const Mahasiswa *mhs) {
+    printf("%s (%s) - IPK %.2f\n", mhs->nama, mhs->nim, mhs->ipk);
+}
+```
+
+Perhatikan parameter `const Mahasiswa *mhs` pada `tampilkan()`:
+
+- Kita mengirim **pointer** agar seluruh isi struct tidak perlu disalin. Ini lebih efisien, terutama jika struct berukuran besar.
+- Keyword `const` menandakan bahwa function **hanya membaca** data. Jika kita tidak sengaja menulis `mhs->ipk = 0;` di dalamnya, compiler akan menampilkan _error_.
+
+:::tip
+
+Pedoman sederhana saat mengirim struct ke function:
+
+| Kebutuhan                          | Bentuk Parameter       |
+| ---------------------------------- | ---------------------- |
+| Hanya membaca data (struct kecil)  | `Mahasiswa mhs`        |
+| Hanya membaca data (lebih efisien) | `const Mahasiswa *mhs` |
+| Mengubah data milik pemanggil      | `Mahasiswa *mhs`       |
+
+:::
+
+### Program Lengkap Tahap 4
+
+Sebelum menjalankan program, coba tebak dulu: setelah kedua function
+`perbaikiIpk...` dipanggil, berapa IPK `budi` pada setiap tahap?
+
+<CodeBlock language="c" title="04_pointer_function.c" showLineNumbers>
+    {Kode04}
+</CodeBlock>
+
+<a
+    href={`data:text/plain;charset=utf-8,${encodeURIComponent(Kode04)}`}
+    download="04_pointer_function.c"
+>
+    ⬇ Unduh 04_pointer_function.c
+</a>
+
+**Output di terminal:**
+
+```text
+[Awal]               Budi Santoso (2600001) - IPK 3.07
+
+budi.ipk   = 3.07
+ptr->ipk   = 3.07
+(*ptr).ipk = 3.07
+
+[Setelah by value]   Budi Santoso (2600001) - IPK 3.07
+[Setelah by pointer] Budi Santoso (2600001) - IPK 3.70
+```
+
+:::tip Cek pemahaman
+
+Setelah `perbaikiIpkByValue(budi, 3.70)`, mengapa IPK `budi` masih `3.07`?
+Function menerima salinan. Perubahan baru terlihat setelah alamat `budi`
+dikirim ke `perbaikiIpkByPointer()`.
+
+:::
+
+:::note
+
+Saat compile, GCC mungkin menampilkan _warning_ bahwa parameter `mhs` pada
+`perbaikiIpkByValue()` "set but not used". Ini wajar, karena function tersebut
+memang sengaja hanya mengubah salinan untuk mendemonstrasikan perbedaan _by
+value_ dan _by pointer_.
+
+:::
+
+---
+
+## Tahap 5: Studi Kasus Program Nilai Mahasiswa
+
+Saatnya menggabungkan seluruh konsep ke dalam satu program utuh.
+
+Program ini memakai `typedef`, array of struct, serta function dengan pointer.
+Nested struct tidak digunakan karena data nilai yang dibutuhkan tidak memiliki
+kelompok bertingkat seperti tanggal lahir. Gunakan nested struct ketika memang
+membuat struktur data lebih jelas, bukan sekadar agar semua konsep muncul dalam
+satu program.
+
+**Deskripsi program:**
+
+1. Pengguna memasukkan jumlah mahasiswa.
+2. Untuk setiap mahasiswa, pengguna memasukkan nama, NIM, nilai tugas, UTS, dan UAS.
+3. Program menghitung nilai akhir dengan bobot: **Tugas 30%**, **UTS 30%**, dan **UAS 40%**.
+4. Program menentukan grade berdasarkan nilai akhir.
+5. Program menampilkan seluruh data dalam bentuk tabel, beserta mahasiswa dengan nilai tertinggi.
+
+Ketentuan grade:
+
+| Nilai Akhir        | Grade |
+| ------------------ | ----- |
+| `nilai >= 85`      | A     |
+| `70 <= nilai < 85` | B     |
+| `55 <= nilai < 70` | C     |
+| `40 <= nilai < 55` | D     |
+| `nilai < 40`       | E     |
+
+### Kode Program
+
+<CodeBlock language="c" title="05_studi_kasus_nilai.c" showLineNumbers>
+    {Kode05}
+</CodeBlock>
+
+<a
+    href={`data:text/plain;charset=utf-8,${encodeURIComponent(Kode05)}`}
+    download="05_studi_kasus_nilai.c"
+>
+    ⬇ Unduh 05_studi_kasus_nilai.c
+</a>
+
+**Output di terminal:**
+
+```text
+Jumlah mahasiswa (1-50): 3
+
+--- Mahasiswa ke-1 ---
+Nama        : Budi Santoso
+NIM         : 2600001
+Nilai Tugas : 80
+Nilai UTS   : 75
+Nilai UAS   : 90
+
+--- Mahasiswa ke-2 ---
+Nama        : Siti Aminah
+NIM         : 2600002
+Nilai Tugas : 90
+Nilai UTS   : 88
+Nilai UAS   : 92
+
+--- Mahasiswa ke-3 ---
+Nama        : Andi Wijaya
+NIM         : 2600003
+Nilai Tugas : 60
+Nilai UTS   : 55
+Nilai UAS   : 50
+
+No  Nama                NIM       Nilai   Grade
+------------------------------------------------
+1   Budi Santoso        2600001   82.50   B
+2   Siti Aminah         2600002   90.20   A
+3   Andi Wijaya         2600003   54.50   D
+
+Nilai tertinggi: Siti Aminah (2600002) dengan nilai 90.20
+```
+
+### Memahami Kode
+
+**1. Struct `Mahasiswa`**
+
+Struct menyimpan seluruh data milik satu mahasiswa: identitas (`nama`, `nim`),
+nilai yang diinput (`tugas`, `uts`, `uas`), serta hasil perhitungan
+(`nilaiAkhir`, `grade`). Dengan begitu, data satu mahasiswa tidak akan tertukar
+dengan mahasiswa lain.
+
+**2. Validasi jumlah mahasiswa**
+
+```c
+if (n < 1 || n > MAX_MAHASISWA) {
+    printf("Jumlah mahasiswa tidak valid!\n");
+    return 1;
+}
+```
+
+Pengecekan ini mencegah program menulis data di luar batas array `daftar`.
+
+**3. Mengirim alamat elemen array ke function**
+
+```c
+inputMahasiswa(&daftar[i]);
+hitungNilai(&daftar[i]);
+```
+
+`&daftar[i]` adalah alamat elemen ke-`i`. Karena function menerima pointer,
+perubahan di dalam `inputMahasiswa()` dan `hitungNilai()` langsung tersimpan ke
+array `daftar` milik `main()`.
+
+**4. Menggunakan `->` di dalam function**
+
+```c
+mhs->nilaiAkhir = 0.3 * mhs->tugas + 0.3 * mhs->uts + 0.4 * mhs->uas;
+```
+
+Karena `mhs` adalah pointer, member diakses dengan arrow operator. Perhatikan
+juga `scanf("%f", &mhs->tugas);`: operator `->` dijalankan lebih dahulu daripada
+`&`, sehingga `&mhs->tugas` berarti **alamat dari member `tugas`**, yaitu
+`&(mhs->tugas)`.
+
+**5. Mengirim array of struct ke function**
+
+```c
+void tampilkanTabel(const Mahasiswa daftar[], int n)
+```
+
+Sama seperti array biasa, yang sebenarnya dikirim adalah alamat elemen
+pertamanya. Keyword `const` memastikan function ini hanya membaca data tanpa
+mengubahnya.
+
+**6. Mencari nilai tertinggi**
+
+`cariIndexTerbaik()` mengembalikan **indeks** mahasiswa dengan nilai akhir
+tertinggi. Dengan indeks tersebut, `main()` dapat mengakses seluruh data
+mahasiswa terbaik, tidak hanya nilainya.
+
+---
+
+## Bonus: Ukuran Struct (sizeof dan Padding)
+
+Bagian ini bersifat tambahan. Kuasai dulu cara mendefinisikan dan menggunakan
+struct, array of struct, nested struct, serta pointer to struct.
+
+Kita dapat mengetahui ukuran struct dengan `sizeof()`. Namun, ukuran struct
+**tidak selalu sama** dengan jumlah ukuran seluruh member-nya.
+
+```c
+#include <stdio.h>
+
+struct ContohA {
+    char a;
+    int b;
+    char c;
+};
+
+struct ContohB {
+    char a;
+    char c;
+    int b;
+};
+
+int main(void) {
+    printf("Ukuran ContohA: %zu bytes\n", sizeof(struct ContohA));
+    printf("Ukuran ContohB: %zu bytes\n", sizeof(struct ContohB));
+
+    return 0;
+}
+```
+
+**Contoh output** pada compiler dan arsitektur yang umum:
+
+```text
+Ukuran ContohA: 12 bytes
+Ukuran ContohB: 8 bytes
+```
+
+Kedua struct memiliki member yang sama (dua `char` dan satu `int`, totalnya
+1 + 1 + 4 = 6 byte), tetapi ukurannya berbeda. Mengapa?
+
+Agar CPU dapat membaca data lebih cepat, compiler menyusun member struct pada
+alamat memori yang "rapi" (_alignment_). Misalnya, `int` umumnya diletakkan pada
+alamat kelipatan 4. Untuk memenuhi aturan itu, compiler menyisipkan byte kosong
+yang disebut **padding**.
+
+```text
+ContohA (12 bytes)
+┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┐
+│ a │ ░ │ ░ │ ░ │ b │ b │ b │ b │ c │ ░ │ ░ │ ░ │
+└───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┘
+
+ContohB (8 bytes)
+┌───┬───┬───┬───┬───┬───┬───┬───┐
+│ a │ c │ ░ │ ░ │ b │ b │ b │ b │
+└───┴───┴───┴───┴───┴───┴───┴───┘
+
+░ = padding (byte kosong)
+```
+
+:::info
+
+Besar padding bergantung pada compiler dan arsitektur. Untuk materi ini, cukup
+pahami bahwa ukuran struct **bisa lebih besar** dari jumlah ukuran member-nya.
+Karena itu, selalu gunakan `sizeof()` ketika membutuhkan ukuran struct (misalnya
+pada `malloc()`), jangan menghitungnya secara manual.
+
+:::
+
+---
+
+## Bonus: Array of Struct dengan Dynamic Memory Allocation
+
+Bagian ini mengembangkan konsep pointer dan array of struct. Pelajari setelah
+memahami materi inti; program berikut memakai `malloc()` dan `free()` untuk
+membuat array of struct yang ukurannya ditentukan saat program berjalan.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char nama[50];
+    float ipk;
+} Mahasiswa;
+
+int main(void) {
+    int n;
+
+    printf("Jumlah mahasiswa: ");
+    scanf("%d", &n);
+
+    // Alokasikan memori untuk n buah Mahasiswa
+    Mahasiswa *daftar = malloc(n * sizeof(Mahasiswa));
+    if (daftar == NULL) {
+        printf("Alokasi memori gagal!\n");
+        return 1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        printf("Nama dan IPK mahasiswa ke-%d: ", i + 1);
+        scanf("%49s %f", daftar[i].nama, &daftar[i].ipk);
+    }
+
+    printf("\nData yang tersimpan:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d. %s - %.2f\n", i + 1, daftar[i].nama, daftar[i].ipk);
+    }
+
+    free(daftar);   // kembalikan memori setelah selesai
+    daftar = NULL;
+
+    return 0;
+}
+```
+
+**Output di terminal:**
+
+```text
+Jumlah mahasiswa: 3
+Nama dan IPK mahasiswa ke-1: Budi 3.75
+Nama dan IPK mahasiswa ke-2: Siti 3.90
+Nama dan IPK mahasiswa ke-3: Andi 3.40
+
+Data yang tersimpan:
+1. Budi - 3.75
+2. Siti - 3.90
+3. Andi - 3.40
+```
+
+`malloc(n * sizeof(Mahasiswa))` memesan memori sebesar `n` kali ukuran satu
+struct. Karena `daftar` menunjuk ke awal blok memori tersebut, kita tetap dapat
+mengaksesnya dengan indexing seperti array biasa, yaitu `daftar[i].nama`.
+
+:::warning
+
+Jangan lupa memanggil `free()` setelah memori tidak lagi digunakan untuk
+mencegah _memory leak_, dan selalu periksa apakah `malloc()` mengembalikan
+`NULL`.
+
+:::
+
+
+---
+
+## Best Practices
+
+**1. Kelompokkan hanya data yang saling berkaitan**
+
+Struct `Mahasiswa` sebaiknya hanya berisi data milik seorang mahasiswa. Jangan
+mencampurkan data yang tidak berhubungan, misalnya jumlah total mahasiswa.
+
+**2. Gunakan nama yang jelas dan konsisten**
+
+Gunakan `PascalCase` untuk nama struct (`Mahasiswa`, `DataBuku`) dan `camelCase`
+untuk nama member serta variabel (`nilaiAkhir`, `tanggalLahir`).
+
+**3. Gunakan `typedef` agar kode lebih ringkas**
+
+`Mahasiswa mhs;` lebih mudah dibaca daripada `struct Mahasiswa mhs;`, terutama
+ketika struct dipakai berkali-kali.
+
+**4. Pilih cara mengirim struct sesuai kebutuhan**
+
+Gunakan `const StructName *` untuk membaca struct tanpa menyalin seluruh isinya,
+dan `StructName *` jika function perlu mengubah data milik pemanggil. Untuk
+struct kecil yang hanya dibaca, mengirim by value juga sederhana dan wajar.
+
+**5. Selalu inisialisasi struct**
+
+Gunakan `{0}` atau isi seluruh member sebelum digunakan agar tidak ada member
+yang berisi _garbage value_.
+
+**6. Batasi panjang input string**
+
+Gunakan batas lebar seperti `%49s` atau `%49[^\n]` agar input tidak melebihi
+ukuran array member.
+
+---
+
+## Common Mistakes to Avoid
+
+### 1. Lupa Titik Koma Setelah Definisi Struct
+
+```c
+// Salah
+struct Mahasiswa {
+    char nama[50];
+    float ipk;
+}   // tidak ada titik koma!
+
+// Benar
+struct Mahasiswa {
+    char nama[50];
+    float ipk;
+};
+```
+
+### 2. Mengisi Member String dengan `=`
+
+```c
+// Salah
+mhs.nama = "Budi";   // ERROR: array tidak bisa di-assign
+
+// Benar
+strcpy(mhs.nama, "Budi");
+```
+
+### 3. Lupa Keyword `struct` Tanpa `typedef`
+
+Jika struct didefinisikan **tanpa** `typedef`, keyword `struct` wajib ditulis
+saat membuat variabel.
+
+```c
+struct Mahasiswa {
+    char nama[50];
+    float ipk;
+};
+
+// Salah
+Mahasiswa mhs;          // ERROR: tipe Mahasiswa tidak dikenal
+
+// Benar
+struct Mahasiswa mhs;
+```
+
+Atau gunakan `typedef` pada definisi struct.
+
+### 4. Tertukar Antara `.` dan `->`
+
+```c
+Mahasiswa mhs;
+Mahasiswa *ptr = &mhs;
+
+// Salah
+mhs->ipk = 3.75;   // ERROR: mhs bukan pointer
+ptr.ipk = 3.75;    // ERROR: ptr adalah pointer
+
+// Benar
+mhs.ipk = 3.75;    // variabel struct → gunakan .
+ptr->ipk = 3.75;   // pointer ke struct → gunakan ->
+```
+
+### 5. Membandingkan Struct dengan `==`
+
+```c
+// Salah
+if (a == b) { ... }
+
+// Benar: bandingkan member satu per satu
+if (a.x == b.x && a.y == b.y) { ... }
+```
+
+### 6. Lupa `&` Saat Input Member Bertipe Angka
+
+```c
+// Salah
+scanf("%f", mhs.ipk);    // tanpa &
+
+// Benar
+scanf("%f", &mhs.ipk);
+```
+
+Ingat bahwa member bertipe string (array of char) **tidak** memerlukan `&`.
+
+---
+
+## Latihan: Case "Kantin Kampus"
+
+Sekarang giliran kalian berlatih. Bayangkan kalian membantu pengelola kantin
+kampus mencatat menu dan stok makanan. Kerjakan **3 case berikut secara
+berurutan**. Setiap case dirancang selesai dalam **± 6 menit**, dan case
+berikutnya memakai data yang sama dengan case sebelumnya.
+
+| Case | Judul       | Konsep yang diuji           | Target waktu |
+| ---- | ----------- | --------------------------- | ------------ |
+| 1    | Kartu Menu  | struct, dot operator        | 6 menit      |
+| 2    | Daftar Menu | array of struct, loop       | 6 menit      |
+| 3    | Kasir       | pointer to struct, function | 6 menit      |
+
+:::tip
+
+Salin kerangka kode pada setiap case, lalu lengkapi bagian `TODO`. Bandingkan
+output program kalian dengan **hasil yang diharapkan**. Jika sudah sama persis,
+case tersebut selesai.
+
+:::
+
+### Case 1: Kartu Menu (6 menit)
+
+**Cerita:** Kantin menjual _Nasi Goreng_ seharga Rp15.000 dengan stok awal 10
+porsi. Hari ini terjual 3 porsi.
+
+**Tugas:**
+
+1. Buat `typedef struct` bernama `Menu` dengan member `nama` (`char[30]`), `harga` (`int`), dan `stok` (`int`).
+2. Buat variabel `nasiGoreng` dan inisialisasi dengan data di atas.
+3. Kurangi `stok` sebanyak 3 porsi.
+4. Tampilkan nama, harga, sisa stok, dan **nilai stok** (harga × sisa stok).
+
+**Kerangka kode:**
+
+```c
+#include <stdio.h>
+
+// TODO 1: definisikan struct Menu dengan typedef
+
+int main(void) {
+    // TODO 2: buat variabel nasiGoreng dan inisialisasi
+
+    // TODO 3: kurangi stok sebanyak 3
+
+    // TODO 4: tampilkan hasilnya
+
+    return 0;
+}
+```
+
+**Hasil yang diharapkan:**
+
+```text
+Menu       : Nasi Goreng
+Harga      : Rp15000
+Sisa stok  : 7
+Nilai stok : Rp105000
+```
+
+### Case 2: Daftar Menu (6 menit)
+
+**Cerita:** Ternyata kantin menjual lebih dari satu menu. Gunakan struct `Menu`
+dari Case 1.
+
+**Tugas:**
+
+1. Buat array `Menu daftar[3]` dengan data berikut:
+
+    | Menu        | Harga | Stok |
+    | ----------- | ----- | ---- |
+    | Nasi Goreng | 15000 | 10   |
+    | Es Teh      | 5000  | 25   |
+    | Mie Ayam    | 12000 | 0    |
+
+2. Tampilkan seluruh menu dalam bentuk tabel menggunakan loop.
+3. Cari dan tampilkan **menu dengan harga termahal**.
+
+**Kerangka kode:**
+
+```c
+#include <stdio.h>
+
+#define JUMLAH 3
+
+typedef struct {
+    char nama[30];
+    int harga;
+    int stok;
+} Menu;
+
+int main(void) {
+    // TODO 1: buat array daftar berisi 3 menu
+
+    // TODO 2: tampilkan tabel dengan loop
+
+    // TODO 3: cari index menu termahal, lalu tampilkan
+
+    return 0;
+}
+```
+
+**Hasil yang diharapkan:**
+
+```text
+No  Menu          Harga     Stok
+1   Nasi Goreng   15000     10
+2   Es Teh        5000      25
+3   Mie Ayam      12000     0
+
+Menu termahal: Nasi Goreng (Rp15000)
+```
+
+:::tip
+
+Gunakan format `%-4d%-14s%-10d%d` agar kolom rapi. Untuk mencari menu termahal,
+pakai pola "simpan index terbaik" seperti pada Tahap 2.
+
+:::
+
+### Case 3: Kasir (6 menit)
+
+**Cerita:** Kasir mulai melayani pembeli. Setiap penjualan hanya boleh
+mengurangi stok **jika stok mencukupi**.
+
+**Tugas:**
+
+1. Lengkapi function `int jual(Menu *m, int jumlah)`:
+    - Jika `stok >= jumlah`: kurangi stok, lalu return `1` (berhasil).
+    - Jika tidak: stok tidak berubah, lalu return `0` (gagal).
+2. Pada `main()`, gunakan data yang sama dengan Case 2, lalu coba:
+    - jual 4 Nasi Goreng
+    - jual 1 Mie Ayam
+    - jual 8 Nasi Goreng
+3. Tampilkan hasil tiap penjualan beserta stok terkini.
+
+**Kerangka kode:**
+
+```c
+#include <stdio.h>
+
+typedef struct {
+    char nama[30];
+    int harga;
+    int stok;
+} Menu;
+
+// TODO 1: tulis function jual() di sini
+
+int main(void) {
+    Menu daftar[3] = {
+        {"Nasi Goreng", 15000, 10},
+        {"Es Teh",       5000, 25},
+        {"Mie Ayam",    12000,  0}
+    };
+
+    // TODO 2: panggil jual() untuk 3 transaksi
+    // TODO 3: cetak hasilnya dengan if-else
+
+    return 0;
+}
+```
+
+**Hasil yang diharapkan:**
+
+```text
+Jual 4 Nasi Goreng : Berhasil (sisa stok 6)
+Jual 1 Mie Ayam    : Gagal (stok 0)
+Jual 8 Nasi Goreng : Gagal (stok 6)
+```
+
+:::tip
+
+Kirim alamat elemen array dengan `jual(&daftar[0], 4)`, dan gunakan `->` di
+dalam function. Perhatikan bahwa transaksi ketiga gagal karena stok Nasi Goreng
+tinggal 6 setelah transaksi pertama.
+
+:::
+
+---
+
+## Ringkasan
+
+Pada materi ini, kita telah mempelajari bahwa struct memungkinkan kita
+mengelompokkan beberapa data dengan tipe berbeda menjadi satu kesatuan.
+
+Konsep utama yang perlu diingat:
+
+```text
+struct
+→ Tipe data buatan untuk mengelompokkan beberapa member.
+
+Member
+→ Variabel yang berada di dalam struct.
+
+Dot Operator (.)
+→ Mengakses member melalui variabel struct. Contoh: mhs.ipk
+
+typedef
+→ Memberikan nama alias agar keyword struct tidak perlu ditulis berulang.
+
+Array of Struct
+→ Array yang setiap elemennya berupa struct. Contoh: daftar[i].nama
+
+Nested Struct
+→ Struct yang memiliki member berupa struct lain. Contoh: mhs.tanggalLahir.tahun
+
+Pointer to Struct
+→ Pointer yang menyimpan alamat sebuah variabel struct.
+
+Arrow Operator (->)
+→ Mengakses member melalui pointer. ptr->ipk sama dengan (*ptr).ipk
+
+Struct sebagai Parameter
+→ By value  : function menerima salinan.
+→ By pointer: function dapat mengubah data asli.
+
+Padding
+→ Byte kosong tambahan yang membuat ukuran struct bisa lebih besar
+  dari jumlah ukuran member-nya.
+```
+
+Dengan struct, program menjadi lebih terorganisir karena data yang saling
+berkaitan disimpan bersama dalam satu tempat, sehingga lebih mudah dibaca,
+dikelola, dan dikembangkan.
